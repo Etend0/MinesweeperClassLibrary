@@ -47,7 +47,7 @@ namespace MinesweeperClassLibrary.Models
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{Row} {Column} {isVisited} {isVisited} {isFlagged} {NumberOfBombNeighbors} {HasSpecialReward}";
+            return $"{Row} {Column} {Type} {isVisited} {isBomb} {isFlagged} {NumberOfBombNeighbors} {HasSpecialReward}";
         }
 
         /// <summary>
