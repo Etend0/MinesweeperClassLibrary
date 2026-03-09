@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MinesweeperClassLibrary.Tests/MinesweeperClassLibrary.Tests.csproj" />
+  <Project Path="MinesweeperClassLibrary/MinesweeperClassLibrary.csproj" />
+  <Project Path="MinesweeperConsoleApp/MinesweeperConsoleApp.csproj" />
+</Solution>
