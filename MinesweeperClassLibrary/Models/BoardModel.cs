@@ -63,7 +63,7 @@ namespace MinesweeperClassLibrary.Models
                     if (Cells[i, j] == null)
                     {
                         // Create the default cell
-                        Cells[i, j] = new CellModel(i, j, "0", false, false, 0, false);
+                        Cells[i, j] = new CellModel(i, j, "0", false, false, false, 0, false);
                     }
                 }
             }

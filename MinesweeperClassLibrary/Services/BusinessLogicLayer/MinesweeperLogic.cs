@@ -86,10 +86,10 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                 Column = random.Next(0, Size);
 
                 // Check if the chosen position does not have a bomb, if it doesn't, place one there and increment the bombs placed counter
-                if (Cells[Row, Column].Type != "B")
+                if (Cells[Row, Column].isBomb != true)
                 {
                     // Create the bomb
-                    Cells[Row, Column] = new CellModel(Row, Column, "B", false, false, 0, false);
+                    Cells[Row, Column] = new CellModel(Row, Column, " ", false, true, false, 0, false);
 
                     // Increment the bombs placed counter
                     bombsPlaced++;
@@ -115,7 +115,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                     int count = 0;
 
                     // If the current cell is not a bomb, check its neighbors for bombs and increment the count for each bomb found
-                    if (currentCell.Type != "B")
+                    if (currentCell.isBomb != true)
                     {
                         // Check each corrospinding neighboring position around the cell in 8 directions
                         while (count < 8)
@@ -165,7 +165,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                             if (neighborRow >= 0 && neighborRow < Size && neighborCol >= 0 && neighborCol < Size)
                             {
                                 // If we aren't, check if we found a bomb, if so, increment the current cell's NumberOfBombNeighbors
-                                if (Cells[neighborRow, neighborCol].Type == "B")
+                                if (Cells[neighborRow, neighborCol].isBomb == true)
                                 {
                                     // Increment the current cell's NumberOfBombNeighbors
                                     currentCell.NumberOfBombNeighbors++;
@@ -220,13 +220,15 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
 
                     // Get the current cell and its type and number of bomb neighbors
                     CellModel currentCell = Cells[y, x];
-                    // Get the string representation of the cell to draw and its number of bomb neighbors
+                    // Get the bool bomb value to determine if the cell is a bomb or not
+                    bool bomb = currentCell.isBomb;
+                    // Get the string representation of the cell to draw
                     string type = currentCell.DrawMe();
                     // Get the number of bomb neighbors for the current cell
                     int bombNeighbors = currentCell.NumberOfBombNeighbors;
 
                     // Set the color based on the number of bomb neighbors if the cell is not a bomb
-                    if (bombNeighbors != 0 && type != "B")
+                    if (bombNeighbors != 0 && bomb != true)
                     {
                         switch (bombNeighbors)
                         {
@@ -249,7 +251,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                     }
 
                     // If the cell is a bomb, set the color to red
-                    if (type == "B ")
+                    if (bomb)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                     }

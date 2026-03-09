@@ -48,7 +48,7 @@ namespace MinesweeperClassLibrary.Tests
                 for (int j = 0; j < board.Size; j++)
                 {
                     // Check if the cell contains a bomb and increment the bomb count
-                    if (board.Cells[i, j].Type == "B")
+                    if (board.Cells[i, j].isBomb == true)
                     {
                         // Increment the bomb count if a bomb is found
                         bombCount++;
@@ -80,7 +80,7 @@ namespace MinesweeperClassLibrary.Tests
                 for (int j = 0; j < board.Size; j++)
                 {
                     // If the cell does not contain a bomb, count the number of bombs around it and assert that it matches the expected count
-                    if (board.Cells[i, j].Type != "B")
+                    if (board.Cells[i, j].isBomb == false)
                     {
                         // Initialize the expected bomb count to zero
                         int expectedCount = 0;
@@ -94,7 +94,7 @@ namespace MinesweeperClassLibrary.Tests
                                 if (i + x >= 0 && i + x < board.Size && j + y >= 0 && j + y < board.Size)
                                 {
                                     // If the neighboring cell contains a bomb, increment the expected bomb count
-                                    if (board.Cells[i + x, j + y].Type == "B")
+                                    if (board.Cells[i + x, j + y].isBomb == true)
                                     {
                                         // Increment the expected bomb count if a bomb is found in the neighboring cell
                                         expectedCount++;

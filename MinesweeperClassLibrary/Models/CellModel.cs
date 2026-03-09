@@ -21,6 +21,7 @@ namespace MinesweeperClassLibrary.Models
         public int Column { get; set; }
         public String Type { get; set; }
         public bool isVisited { get; set; }
+        public bool isBomb { get; set; }
         public bool isFlagged { get; set; }
         public int NumberOfBombNeighbors { get; set; }
         public bool HasSpecialReward { get; set; }
@@ -28,12 +29,13 @@ namespace MinesweeperClassLibrary.Models
         /// <summary>
         /// Default constructor for the cell model
         /// </summary>
-        public CellModel(int row, int column, String type, bool isVisited, bool isFlagged, int numberOfBombNeighbors, bool hasSpecialReward)
+        public CellModel(int row, int column, String type, bool isVisited, bool isBomb, bool isFlagged, int numberOfBombNeighbors, bool hasSpecialReward)
         {
             Row = row;
             Column = column;
             Type = type;
             this.isVisited = isVisited;
+            this.isBomb = isBomb;
             this.isFlagged = isFlagged;
             NumberOfBombNeighbors = numberOfBombNeighbors;
             HasSpecialReward = hasSpecialReward;
@@ -54,7 +56,7 @@ namespace MinesweeperClassLibrary.Models
         public String DrawMe()
         {
             // If the type is B, we know it's a bomb
-            if (Type == "B")
+            if (isBomb)
             {
                 Type = "B ";
             }
