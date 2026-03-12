@@ -55,10 +55,62 @@ namespace MinesweeperClassLibrary.Models
         /// </summary>
         public String DrawMe()
         {
+            if (isVisited)
+            {
+                // If the type is B, we know it's a bomb
+                if (isBomb)
+                {
+                    Type = "B ";
+                }
+                else if (HasSpecialReward)
+                {
+                    // If the cell is flagged, we should print an F
+                    Type = "R ";
+                }
+                else
+                {
+                    // If NumberOfBombNeighbors is 0, we have no bombs around and should print an empty dot
+                    if (NumberOfBombNeighbors == 0)
+                    {
+                        Type = ". ";
+                    }
+                    else
+                    {
+                        // If NumberOfBombNeighors is not 0, print the number of bombs surrounding
+                        Type = NumberOfBombNeighbors + " ";
+                    }
+                }
+            }
+            else
+            {
+                if (isFlagged == false)
+                {
+                    Type = "? ";
+                }
+                else
+                {
+                    Type = "F ";
+                }
+            }
+
+            // Return the type of cell
+            return Type;
+        }
+
+        /// <summary>
+        /// Return the type of cell
+        /// </summary>
+        public String DrawMeCheat()
+        {
             // If the type is B, we know it's a bomb
             if (isBomb)
             {
                 Type = "B ";
+            }
+            else if (HasSpecialReward)
+            {
+                // If the cell is flagged, we should print an F
+                Type = "R ";
             }
             else
             {

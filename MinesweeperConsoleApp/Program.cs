@@ -12,47 +12,143 @@ using MinesweeperClassLibrary.Services.BusinessLogicLayer;
 namespace MinesweeperConsoleApp
 {
     internal class Program
-    {   
-        public static bool Start;
+    {
+        // Declare static variables for game state
+
+        // Variable to track if the player has won the game
+        static bool victory;
+
+        // Variable to track if the player has lost the game
+        static bool death;
+
+        static String state;
+
+        // Create an instance of the MinesweeperLogic
+        static MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
+
+        // Create a new board with difficulty level 1
+        static BoardModel board = new BoardModel(0);
 
         static void Main(string[] args)
         {
+            // Set victory to false
+            victory = false;
+
+            // Set death to false
+            death = false;
+
+            // Set state to empty
+            state = " ";
+
             // Start the game
             Console.WriteLine("Hello, welcome to Minesweeper!");
 
             // Display the answer keys for the first board
             Console.WriteLine("Here is the answer key for the first board");
-            // Create a new board with difficulty level 1
-            BoardModel board = new BoardModel(1);
-            // Create a new instance of the MinesweeperLogic class
-            MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
             // Get the size of the board
             minesweeperLogic.GetSize(board.Size);
             // Set up the bombs on the board
             minesweeperLogic.SetupBombs(board.Cells);
             // Count the bombs on the board
             minesweeperLogic.CountBombs();
-            // Print the answer key for the board
-            minesweeperLogic.PrintAnswers();
+            // Show the answers
+            ShowAnswers();
 
-            // Display the answer keys for the second board
-            Console.WriteLine("Here is the answer key for the second board");
-            // Create a new board with difficulty level 2
-            BoardModel board2 = new BoardModel(2);
-            // Create a new instance of the MinesweeperLogic class
-            MinesweeperLogic minesweeperLogic2 = new MinesweeperLogic();
-            // Get the size of the board
-            minesweeperLogic2.GetSize(board2.Size);
-            // Set up the bombs on the board
-            minesweeperLogic2.SetupBombs(board2.Cells);
-            // Count the bombs on the board
-            minesweeperLogic2.CountBombs();
-            // Print the answer key for the board
-            minesweeperLogic2.PrintAnswers();
+            // Keep looping until we either win or lose
+            while (!victory && !death)
+            {
+                int x = 0;
 
-            // Prompt the user to press any key to exit
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
+                int y = 0;
+
+                int checkOrFlag = 0;
+
+                // Here is the current board
+                PrintBoard();
+
+                // Prompt the user for the row
+                Console.WriteLine("Enter the row number");
+                string inputRow = Console.ReadLine();
+
+                if (int.TryParse(inputRow, out int row))
+                {
+                    x = row;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input for row. Please enter a valid integer.");
+                    continue; // Skip the rest of the loop and prompt again
+                }
+
+                // Prompt the user to enter a cell to reveal
+                Console.WriteLine("Enter the column number");
+                string inputColumn = Console.ReadLine();
+
+                if (int.TryParse(inputColumn, out int column))
+                {
+                    y = column;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input for column. Please enter a valid integer.");
+                    continue; // Skip the rest of the loop and prompt again
+                }
+
+                // Prompt the user to enter a cell to reveal
+                Console.WriteLine("Enter 1 to visit, enter 2 to flag");
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out int flag))
+                {
+                    checkOrFlag = flag;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input for row number. Please enter a valid integer.");
+                    continue; // Skip the rest of the loop and prompt again
+                }
+
+                if (x < 0 || x >= board.Size || y < 0 || y >= board.Size)
+                {
+                    Console.WriteLine("Invalid row or column number. Please enter values between 0 and " + (board.Size - 1));
+                    continue; // Skip the rest of the loop and prompt again
+                }
+                else
+                {
+                    minesweeperLogic.UpdateCell(x, y, checkOrFlag);
+                }
+            }
+        }
+
+        static void PrintBoard()
+        {
+            // Print the answer key for the board
+            minesweeperLogic.PrintAnswers(false);
+
+            state = board.DetermineGameState(state);
+
+            switch(state)
+            {
+                case "StillPlaying":
+                    break;
+
+                case "Won":
+                    victory = true;
+                    Console.WriteLine("Congratulations, you won!");
+                    break;
+
+                case "Lost":
+                    death = true;
+                    Console.WriteLine("* KABOOM! *");
+                    Console.WriteLine("Sorry, you lost!");
+                    break;
+            }
+        }
+
+        static void ShowAnswers()
+        {
+            // Print the answer key for the board
+            minesweeperLogic.PrintAnswers(true);
         }
     }
 }

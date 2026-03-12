@@ -185,7 +185,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         }
 
         // Method to print the board to the console
-        public void PrintAnswers()
+        public bool PrintAnswers(bool check)
         {
             // Column headers
             Console.Write("   ");
@@ -223,12 +223,24 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                     // Get the bool bomb value to determine if the cell is a bomb or not
                     bool bomb = currentCell.isBomb;
                     // Get the string representation of the cell to draw
-                    string type = currentCell.DrawMe();
+                    string type;
+
+                    // Check if we're not viewing the board
+                    if (check != true)
+                    {
+                        // If not, draw the cell as a hidden cell
+                        type = currentCell.DrawMe();
+                    }
+                    else
+                    {
+                        // If we are, draw the cell as its true type
+                        type = currentCell.DrawMeCheat();
+                    }
                     // Get the number of bomb neighbors for the current cell
                     int bombNeighbors = currentCell.NumberOfBombNeighbors;
 
                     // Set the color based on the number of bomb neighbors if the cell is not a bomb
-                    if (bombNeighbors != 0 && bomb != true)
+                    if (bombNeighbors != 0 && bomb != true && check == true)
                     {
                         switch (bombNeighbors)
                         {
@@ -251,7 +263,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                     }
 
                     // If the cell is a bomb, set the color to red
-                    if (bomb)
+                    if (bomb && check == true)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                     }
@@ -272,6 +284,28 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                 }
                 Console.WriteLine("+");
             }
+
+            return check;
+        }
+
+        public int UpdateCell(int x, int y, int checkOrFlag)
+        {
+            // Get the current cell and its type and number of bomb neighbors
+            CellModel currentCell = Cells[y, x];
+
+            // Check if we're flagging the cell
+            if (checkOrFlag == 1)
+            {
+                // If not, show the cell
+                currentCell.isVisited = true;
+            }
+            else if (checkOrFlag == 2)
+            {
+                // If yes, flag the cell
+                currentCell.isFlagged = true;
+            }
+
+            return x;
         }
     }
 }

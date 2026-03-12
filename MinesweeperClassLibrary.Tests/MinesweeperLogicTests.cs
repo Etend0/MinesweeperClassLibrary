@@ -130,7 +130,7 @@ namespace MinesweeperClassLibrary.Tests
                 // Redirect the console output to the StringWriter
                 Console.SetOut(sw);
                 // Call the PrintAnswers method to print the board
-                minesweeperLogic.PrintAnswers();
+                minesweeperLogic.PrintAnswers(true);
 
                 // Get the output as a string
                 var output = sw.ToString();
