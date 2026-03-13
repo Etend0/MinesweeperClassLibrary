@@ -17,9 +17,9 @@ namespace MinesweeperClassLibrary.Models
     public class CellModel
     {
         // Class level properties
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public String Type { get; set; }
+        public int Row { get; private set; }
+        public int Column { get; private set; }
+        public String Type { get; private set; }
         public bool isVisited { get; set; }
         public bool isBomb { get; set; }
         public bool isFlagged { get; set; }
