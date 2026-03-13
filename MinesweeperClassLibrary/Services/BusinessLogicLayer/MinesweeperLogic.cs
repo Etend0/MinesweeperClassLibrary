@@ -45,6 +45,44 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             return Size;
         }
 
+        public CellModel[,] SetupRewards(CellModel[,] Cells)
+        {
+            // Grab the current list of cells and set it to the class property
+            this.Cells = Cells;
+            // Create a random number generator to randomize positions on the board
+            Random random = new Random();
+            // Calculate the total number of cells on the board
+            int GridSize = Size * Size;
+            // Calculate the number of rewards to place based on 7% of the total cells
+            double numberOfRewards = GridSize * 0.07;
+            // Randomly select a row position for the reward
+            int Row = random.Next(0, Size);
+            // Randomly select a column position for the reward
+            int Column = random.Next(0, Size);
+            // Convert the number of rewards to an integer
+            int FinalNumberRewards = Convert.ToInt32(numberOfRewards);
+            // Set the current number of placed rewards
+            int rewardsPlaced = 0;
+            // Loop until the max number of rewards have been placed
+            while (rewardsPlaced < FinalNumberRewards)
+            {
+                // Randomly select a row position for the reward
+                Row = random.Next(0, Size);
+                // Randomly select a column position for the reward
+                Column = random.Next(0, Size);
+                // Check if the chosen position does not have a bomb or reward, if it doesn't, place one there and increment the rewards placed counter
+                if (Cells[Row, Column].HasSpecialReward != true)
+                {
+                    // Create the reward
+                    Cells[Row, Column] = new CellModel(Row, Column, " ", false, false, false, 0, true);
+                    // Increment the rewards placed counter
+                    rewardsPlaced++;
+                }
+            }
+            // Return the updated cells with rewards placed
+            return Cells;
+        }
+
         /// <summary>
         /// Method to setup the bombs on the board
         /// </summary>
@@ -63,6 +101,9 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
 
             // Calculate the number of bombs to place based on 15% of the total cells
             double NumberOfBombs = GridSize * 0.15;
+
+            // Calculate the number of rewards to place based on 7% of the total cells
+            double numberOfRewards = GridSize * 0.07;
 
             // Randomly select a row position for the bomb
             int Row = random.Next(0, Size);
@@ -86,7 +127,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                 Column = random.Next(0, Size);
 
                 // Check if the chosen position does not have a bomb, if it doesn't, place one there and increment the bombs placed counter
-                if (Cells[Row, Column].isBomb != true)
+                if (Cells[Row, Column].isBomb != true && Cells[Row, Column].HasSpecialReward != true)
                 {
                     // Create the bomb
                     Cells[Row, Column] = new CellModel(Row, Column, " ", false, true, false, 0, false);
@@ -220,6 +261,8 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
 
                     // Get the current cell and its type and number of bomb neighbors
                     CellModel currentCell = Cells[y, x];
+                    // Get the bool reward value to determine if the cell is a reward or not
+                    bool reward = currentCell.HasSpecialReward;
                     // Get the bool bomb value to determine if the cell is a bomb or not
                     bool bomb = currentCell.isBomb;
                     // Get the string representation of the cell to draw
@@ -239,33 +282,46 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                     // Get the number of bomb neighbors for the current cell
                     int bombNeighbors = currentCell.NumberOfBombNeighbors;
 
-                    // Set the color based on the number of bomb neighbors if the cell is not a bomb
-                    if (bombNeighbors != 0 && bomb != true && check == true)
+                    if (check || currentCell.isVisited)
                     {
-                        switch (bombNeighbors)
+                        // Set the color based on the number of bomb neighbors if the cell is not a bomb
+                        if (bombNeighbors != 0 && bomb != true && reward != true)
                         {
-                            case 1:
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                break;
+                            switch (bombNeighbors)
+                            {
+                                case 1:
+                                    // If the cell has 1 bomb neighbor, set the color to cyan
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    break;
 
-                            case 2:
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                break;
+                                case 2:
+                                    // If the cell has 2 bomb neighbors, set the color to green
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                    break;
 
-                            case 3:
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                break;
+                                case 3:
+                                    // If the cell has 3 bomb neighbors, set the color to magenta
+                                    Console.ForegroundColor = ConsoleColor.Magenta;
+                                    break;
 
-                            case 4:
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                break;
+                                case 4:
+                                    // If the cell has 4 bomb neighbors, set the color to yellow
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    break;
+                            }
                         }
-                    }
 
-                    // If the cell is a bomb, set the color to red
-                    if (bomb && check == true)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
+                        // If the cell has a reward, set the color to blue
+                        if (reward)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                        }
+
+                        // If the cell is a bomb, set the color to red
+                        if (bomb)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                        }
                     }
 
                     // Draw cell with vertical separator
@@ -288,6 +344,13 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             return check;
         }
 
+        /// <summary>
+        /// Method to update the cell
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="checkOrFlag"></param>
+        /// <returns></returns>
         public int UpdateCell(int x, int y, int checkOrFlag)
         {
             // Get the current cell and its type and number of bomb neighbors
@@ -298,6 +361,15 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             {
                 // If not, show the cell
                 currentCell.isVisited = true;
+
+                // Check if the cell has a special reward
+                if (currentCell.HasSpecialReward == true)
+                {
+                    // Increment RewardsRemaining
+                    RewardsRemaining++;
+                    // If yes, show the reward message
+                    Console.WriteLine("You found a reward!");
+                }
             }
             else if (checkOrFlag == 2)
             {

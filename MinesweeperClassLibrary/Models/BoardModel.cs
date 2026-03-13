@@ -143,7 +143,7 @@ namespace MinesweeperClassLibrary.Models
             else
             {
                 // If a bomb has been detonated, the game has been lost
-                state = "Lost";
+                state = "Lost"; 
             }
 
             // Return the current game state

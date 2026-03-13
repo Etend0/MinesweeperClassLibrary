@@ -47,6 +47,8 @@ namespace MinesweeperConsoleApp
             Console.WriteLine("Here is the answer key for the first board");
             // Get the size of the board
             minesweeperLogic.GetSize(board.Size);
+            // Set up the rewards on the board
+            minesweeperLogic.SetupRewards(board.Cells);
             // Set up the bombs on the board
             minesweeperLogic.SetupBombs(board.Cells);
             // Count the bombs on the board
@@ -57,6 +59,7 @@ namespace MinesweeperConsoleApp
             // Keep looping until we either win or lose
             while (!victory && !death)
             {
+                // Initialize variables for the loop
                 int x = 0;
 
                 int y = 0;
@@ -66,85 +69,128 @@ namespace MinesweeperConsoleApp
                 // Here is the current board
                 PrintBoard();
 
+                // Break the loop if we have either won or lost
+                if (victory || death)
+                {
+                    // Don't continue loop
+                    break;
+                }
+
                 // Prompt the user for the row
                 Console.WriteLine("Enter the row number");
+
+                // Read the user's input for the row
                 string inputRow = Console.ReadLine();
 
+                // Try to parse the user's input for the row, if it's not a valid integer, prompt them again
                 if (int.TryParse(inputRow, out int row))
                 {
+                    // Grab the row number from the user's input
                     x = row;
                 }
                 else
                 {
+                    // If the user's input is not a valid integer, display an error message and prompt them again
                     Console.WriteLine("Invalid input for row. Please enter a valid integer.");
-                    continue; // Skip the rest of the loop and prompt again
+                    // Skip the rest of the loop
+                    continue;
                 }
 
                 // Prompt the user to enter a cell to reveal
                 Console.WriteLine("Enter the column number");
+
+                // Read the user's input for the column
                 string inputColumn = Console.ReadLine();
 
+                // Try to parse the user's input for the column, if it's not a valid integer, prompt them again
                 if (int.TryParse(inputColumn, out int column))
                 {
+                    // Grab the column number from the user's input
                     y = column;
                 }
                 else
                 {
+                    // If the user's input is not a valid integer, display an error message and prompt them again
                     Console.WriteLine("Invalid input for column. Please enter a valid integer.");
-                    continue; // Skip the rest of the loop and prompt again
+                    // Skip the rest of the loop
+                    continue;
                 }
 
                 // Prompt the user to enter a cell to reveal
                 Console.WriteLine("Enter 1 to visit, enter 2 to flag");
+                // Read the user's input for whether they want to check or flag the cell
                 string input = Console.ReadLine();
 
+                // Parse the input to check if it's a valid integer
                 if (int.TryParse(input, out int flag))
                 {
+                    // Grab the user's input for whether they want to check or flag the cell
                     checkOrFlag = flag;
                 }
                 else
                 {
+                    // If the user's input is not a valid integer, display an error message and prompt them again
                     Console.WriteLine("Invalid input for row number. Please enter a valid integer.");
-                    continue; // Skip the rest of the loop and prompt again
+                    // Skip the rest of the loop
+                    continue;
                 }
 
+                // Check if the user's input for the row and column is within the bounds of the board
                 if (x < 0 || x >= board.Size || y < 0 || y >= board.Size)
                 {
+                    // If the user's input for the row or column is out of bounds, display an error message and prompt them again
                     Console.WriteLine("Invalid row or column number. Please enter values between 0 and " + (board.Size - 1));
-                    continue; // Skip the rest of the loop and prompt again
+                    // Skip the rest of the loop
+                    continue;
                 }
                 else
                 {
+                    // Update the cell based on the user's input
                     minesweeperLogic.UpdateCell(x, y, checkOrFlag);
                 }
             }
+
+            // Prompt the user to press any key to exit on end of game
+            Console.Write("Press anything to exit.");
         }
 
+        // Method to print the board to the console
         static void PrintBoard()
         {
             // Print the answer key for the board
             minesweeperLogic.PrintAnswers(false);
 
+            // Determine the game state after the user's move
             state = board.DetermineGameState(state);
 
-            switch(state)
+            // Check the game state for whether we have won, lost, or are still playing
+            switch (state)
             {
+                // If we are still playing, we don't need to do anything
                 case "StillPlaying":
+                    Console.WriteLine("Game in progress");
                     break;
 
+                // If we have won, set victory to true
                 case "Won":
+                    // Set victory to true
                     victory = true;
+                    // Write to the console of victory results
                     Console.WriteLine("Congratulations, you won!");
                     break;
 
+                // If we have lost, set death to true
                 case "Lost":
+                    // Set death to true
                     death = true;
+                    // Write to the console of death results
                     Console.WriteLine("* KABOOM! *");
                     Console.WriteLine("Sorry, you lost!");
                     break;
             }
         }
 
+        // Method to show the answers for the board
         static void ShowAnswers()
         {
             // Print the answer key for the board
