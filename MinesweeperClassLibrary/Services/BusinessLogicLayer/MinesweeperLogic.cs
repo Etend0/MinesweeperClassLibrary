@@ -16,13 +16,13 @@ using System.Threading.Tasks;
 
 namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
 {
-    public class MinesweeperLogic
+    public class MinesweeperLogic : IMinesweeperLogic
     {
         // Class properties
-        public int RewardsRemaining;
-        public int DifficultyLevels;
-        public int Size;
-        public CellModel[,] Cells;
+        public int RewardsRemaining { get; set; }
+        public int DifficultyLevels { get; set; }
+        public int Size { get; set; }
+        public CellModel[,] Cells { get; set; }
 
         /// <summary>
         ///  Set the current game state
@@ -351,7 +351,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         /// <param name="y"></param>
         /// <param name="checkOrFlag"></param>
         /// <returns></returns>
-        public int UpdateCell(int x, int y, int checkOrFlag)
+        public void UpdateCell(int x, int y, int checkOrFlag)
         {
             // Get the current cell and its type and number of bomb neighbors
             CellModel currentCell = Cells[y, x];
@@ -376,8 +376,20 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                 // If yes, flag the cell
                 currentCell.isFlagged = true;
             }
+        }
 
-            return x;
+        /// <summary>
+        /// Determines if a cell at position is a bomb
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public bool IdentifyCell(int x, int y)
+        {
+            // Get the current cell
+            CellModel currentCell = Cells[y, x];
+            // Return if the cell is a bomb
+            return currentCell.isBomb;
         }
     }
 }

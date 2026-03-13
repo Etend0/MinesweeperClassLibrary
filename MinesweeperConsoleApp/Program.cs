@@ -24,7 +24,7 @@ namespace MinesweeperConsoleApp
         static String state;
 
         // Create an instance of the MinesweeperLogic
-        static MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
+        static IMinesweeperLogic minesweeperLogic = new MinesweeperLogic();
 
         // Create a new board with difficulty level 1
         static BoardModel board = new BoardModel(0);
@@ -87,6 +87,15 @@ namespace MinesweeperConsoleApp
                 {
                     // Grab the row number from the user's input
                     x = row;
+
+                    // Check if the user's input for the row and column is within the bounds of the board
+                    if (x < 0 || x >= board.Size)
+                    {
+                        // If the user's input for the row or column is out of bounds, display an error message and prompt them again
+                        Console.WriteLine("Invalid row number. Please enter values between 0 and " + (board.Size - 1));
+                        // Skip the rest of the loop
+                        continue;
+                    }
                 }
                 else
                 {
@@ -107,6 +116,15 @@ namespace MinesweeperConsoleApp
                 {
                     // Grab the column number from the user's input
                     y = column;
+
+                    // Check if the user's input for the row and column is within the bounds of the board
+                    if (y < 0 || y >= board.Size)
+                    {
+                        // If the user's input for the row or column is out of bounds, display an error message and prompt them again
+                        Console.WriteLine("Invalid column number. Please enter values between 0 and " + (board.Size - 1));
+                        // Skip the rest of the loop
+                        continue;
+                    }
                 }
                 else
                 {
@@ -116,9 +134,18 @@ namespace MinesweeperConsoleApp
                     continue;
                 }
 
-                // Prompt the user to enter a cell to reveal
-                Console.WriteLine("Enter 1 to visit, enter 2 to flag");
-                // Read the user's input for whether they want to check or flag the cell
+                if (minesweeperLogic.RewardsRemaining == 0)
+                {
+                    // Prompt the user to enter a cell to reveal
+                    Console.WriteLine("Enter 1 to visit, enter 2 to flag");
+                }
+                else
+                {
+                    // Prompt the user to enter a cell to reveal
+                    Console.WriteLine("Enter 1 to visit, enter 2 to flag, 3 to use reward (cell viewer)");
+                }
+
+                // Read the user's input for whether they want to check or flag the cell or use a reward if they have one available
                 string input = Console.ReadLine();
 
                 // Parse the input to check if it's a valid integer
@@ -135,17 +162,30 @@ namespace MinesweeperConsoleApp
                     continue;
                 }
 
-                // Check if the user's input for the row and column is within the bounds of the board
-                if (x < 0 || x >= board.Size || y < 0 || y >= board.Size)
+                // Parse the input into an integer
+                int inputCheck = int.Parse(input);
+
+                // Check to see if the user tries to use a number other than 1 or 2 when we have to rewards
+                if (inputCheck > 2 && minesweeperLogic.RewardsRemaining == 0)
                 {
-                    // If the user's input for the row or column is out of bounds, display an error message and prompt them again
-                    Console.WriteLine("Invalid row or column number. Please enter values between 0 and " + (board.Size - 1));
-                    // Skip the rest of the loop
+                    // If so, prompt the user to enter 1 or 2 and skip the rest
+                    Console.WriteLine("Please input 1 or 2");
                     continue;
+                }
+
+                // Check if the user tries to use 3 to use a reward when they have rewards available
+                if (inputCheck == 3 && minesweeperLogic.RewardsRemaining > 0)
+                {
+                    // Check if the cell is a bomb
+                    bool checkBomb = minesweeperLogic.IdentifyCell(x, y);
+                    // Print back results
+                    Console.WriteLine("Is it a bomb? " + checkBomb);
+                    // Take away reward
+                    minesweeperLogic.RewardsRemaining--;
                 }
                 else
                 {
-                    // Update the cell based on the user's input
+                    // Otherwise, update the cell based on the user's input for whether they want to check or flag the cell
                     minesweeperLogic.UpdateCell(x, y, checkOrFlag);
                 }
             }
