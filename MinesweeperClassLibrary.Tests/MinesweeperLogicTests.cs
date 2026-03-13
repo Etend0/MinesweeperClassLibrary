@@ -143,5 +143,148 @@ namespace MinesweeperClassLibrary.Tests
                 Assert.Contains("|", output);
             }
         }
+
+        // Test the UpdateCell method to ensure it marks a cell as visited when checking
+        [Fact]
+        public void UpdateCell_ShouldMarkCellAsVisited()
+        {
+            // Create a BoardModel with a set difficulty
+            BoardModel board = new BoardModel(1);
+            // Create an instance of MinesweeperLogic
+            MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
+            // Set the size of the board
+            minesweeperLogic.GetSize(board.Size);
+            // Call the SetupBombs method to place bombs on the board
+            minesweeperLogic.SetupBombs(board.Cells);
+            // Set the Cells property in the logic class
+            minesweeperLogic.Cells = board.Cells;
+
+            // Verify the cell is not visited initially
+            Assert.False(board.Cells[0, 0].isVisited);
+
+            // Call UpdateCell with checkOrFlag = 1 to mark the cell as visited
+            minesweeperLogic.UpdateCell(0, 0, 1);
+
+            // Assert that the cell is now marked as visited
+            Assert.True(board.Cells[0, 0].isVisited);
+        }
+
+        // Test the UpdateCell method to ensure it marks a cell as flagged when flagging
+        [Fact]
+        public void UpdateCell_ShouldMarkCellAsFlagged()
+        {
+            // Create a BoardModel with a set difficulty
+            BoardModel board = new BoardModel(1);
+            // Create an instance of MinesweeperLogic
+            MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
+            // Set the size of the board
+            minesweeperLogic.GetSize(board.Size);
+            // Call the SetupBombs method to place bombs on the board
+            minesweeperLogic.SetupBombs(board.Cells);
+            // Set the Cells property in the logic class
+            minesweeperLogic.Cells = board.Cells;
+
+            // Verify the cell is not flagged initially
+            Assert.False(board.Cells[0, 0].isFlagged);
+
+            // Call UpdateCell with checkOrFlag = 2 to flag the cell
+            minesweeperLogic.UpdateCell(0, 0, 2);
+
+            // Assert that the cell is now marked as flagged
+            Assert.True(board.Cells[0, 0].isFlagged);
+        }
+
+        // Test the IdentifyCell method to ensure it correctly identifies bomb cells
+        [Fact]
+        public void IdentifyCell_ShouldReturnTrueIfBomb()
+        {
+            // Create a BoardModel with a set difficulty
+            BoardModel board = new BoardModel(1);
+            // Create an instance of MinesweeperLogic
+            MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
+            // Set the size of the board
+            minesweeperLogic.GetSize(board.Size);
+            // Call the SetupBombs method to place bombs on the board
+            minesweeperLogic.SetupBombs(board.Cells);
+            // Set the Cells property in the logic class
+            minesweeperLogic.Cells = board.Cells;
+
+            // Find a cell that contains a bomb
+            int bombRow = -1;
+            int bombCol = -1;
+
+            // Iterate through the columns
+            for (int i = 0; i < board.Size; i++)
+            {
+                // Iterate through each cell in the row
+                for (int j = 0; j < board.Size; j++)
+                {
+                    // Check if the cell contains a bomb and store its coordinates
+                    if (board.Cells[i, j].isBomb)
+                    {
+                        // Store the coordinates of the bomb cell
+                        bombRow = i;
+                        bombCol = j;
+                        break;
+                    }
+                }
+                // Break the outer loop if a bomb cell has been found
+                if (bombRow != -1) break;
+            }
+
+            // Assert that we found a cell containing a bomb
+            Assert.True(bombRow != -1);
+
+            // Call IdentifyCell on the bomb cell and verify it returns true
+            bool result = minesweeperLogic.IdentifyCell(bombCol, bombRow);
+            // Assert that the result is true
+            Assert.True(result);
+        }
+
+        // Test the IdentifyCell method to ensure it correctly identifies non-bomb cells
+        [Fact]
+        public void IdentifyCell_ShouldReturnFalseIfNotABomb()
+        {
+            // Create a BoardModel with a set difficulty
+            BoardModel board = new BoardModel(1);
+            // Create an instance of MinesweeperLogic
+            MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
+            // Set the size of the board
+            minesweeperLogic.GetSize(board.Size);
+            // Call the SetupBombs method to place bombs on the board
+            minesweeperLogic.SetupBombs(board.Cells);
+            // Set the Cells property in the logic class
+            minesweeperLogic.Cells = board.Cells;
+
+            // Find a cell that does not contain a bomb
+            int nonBombRow = -1;
+            int nonBombCol = -1;
+            // Iterate through the columns
+            for (int i = 0; i < board.Size; i++)
+            {
+                // Iterate through each cell in the row
+                for (int j = 0; j < board.Size; j++)
+                {
+                    // Check if the cell does not contain a bomb and store its coordinates
+                    if (!board.Cells[i, j].isBomb)
+                    {
+                        // Store the coordinates of the non-bomb cell
+                        nonBombRow = i;
+                        nonBombCol = j;
+                        break;
+                    }
+                }
+                // Break the outer loop if a non bomb cell has been found
+                if (nonBombRow != -1) break;
+            }
+
+            // Assert that we found at cell not containing a bomb
+            Assert.True(nonBombRow != -1);
+
+            // Call IdentifyCell on the non bomb cell and verify it returns false
+            bool result = minesweeperLogic.IdentifyCell(nonBombCol, nonBombRow);
+            // Assert that the result is false
+            Assert.False(result);
+        }
     }
 }
