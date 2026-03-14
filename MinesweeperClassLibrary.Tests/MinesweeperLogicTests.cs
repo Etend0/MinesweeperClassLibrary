@@ -156,8 +156,6 @@ namespace MinesweeperClassLibrary.Tests
             minesweeperLogic.GetSize(board.Size);
             // Call the SetupBombs method to place bombs on the board
             minesweeperLogic.SetupBombs(board.Cells);
-            // Set the Cells property in the logic class
-            minesweeperLogic.Cells = board.Cells;
 
             // Verify the cell is not visited initially
             Assert.False(board.Cells[0, 0].isVisited);
@@ -181,8 +179,6 @@ namespace MinesweeperClassLibrary.Tests
             minesweeperLogic.GetSize(board.Size);
             // Call the SetupBombs method to place bombs on the board
             minesweeperLogic.SetupBombs(board.Cells);
-            // Set the Cells property in the logic class
-            minesweeperLogic.Cells = board.Cells;
 
             // Verify the cell is not flagged initially
             Assert.False(board.Cells[0, 0].isFlagged);
@@ -206,8 +202,6 @@ namespace MinesweeperClassLibrary.Tests
             minesweeperLogic.GetSize(board.Size);
             // Call the SetupBombs method to place bombs on the board
             minesweeperLogic.SetupBombs(board.Cells);
-            // Set the Cells property in the logic class
-            minesweeperLogic.Cells = board.Cells;
 
             // Find a cell that contains a bomb
             int bombRow = -1;
@@ -253,8 +247,6 @@ namespace MinesweeperClassLibrary.Tests
             minesweeperLogic.GetSize(board.Size);
             // Call the SetupBombs method to place bombs on the board
             minesweeperLogic.SetupBombs(board.Cells);
-            // Set the Cells property in the logic class
-            minesweeperLogic.Cells = board.Cells;
 
             // Find a cell that does not contain a bomb
             int nonBombRow = -1;
