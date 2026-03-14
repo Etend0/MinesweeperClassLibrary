@@ -21,10 +21,10 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
     public interface IMinesweeperLogic
     {
         // Properties
-        int RewardsRemaining { get; set; }
-        int DifficultyLevels { get; set; }
-        int Size { get; set; }
-        CellModel[,] Cells { get; set; }
+        int RewardsRemaining { get; }
+        int DifficultyLevels { get; }
+        int Size { get; }
+        CellModel[,] Cells { get; }
 
         // Methods
         /// <summary>
@@ -75,5 +75,10 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         /// <param name="y"></param>
         /// <returns></returns>
         bool IdentifyCell(int x, int y);
+
+        /// <summary>
+        /// Decreases the current reward count by one
+        /// </summary>
+        void DecrementRewards();
     }
 }

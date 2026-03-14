@@ -19,10 +19,10 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
     public class MinesweeperLogic : IMinesweeperLogic
     {
         // Class properties
-        public int RewardsRemaining { get; set; }
-        public int DifficultyLevels { get; set; }
-        public int Size { get; set; }
-        public CellModel[,] Cells { get; set; }
+        public int RewardsRemaining { get; private set; }
+        public int DifficultyLevels { get; private set; }
+        public int Size { get; private set; }
+        public CellModel[,] Cells { get; private set; }
 
         /// <summary>
         ///  Set the current game state
@@ -158,6 +158,8 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                     // If the current cell is not a bomb, check its neighbors for bombs and increment the count for each bomb found
                     if (currentCell.isBomb != true)
                     {
+                        int bombsFound = 0;
+
                         // Check each corrospinding neighboring position around the cell in 8 directions
                         while (count < 8)
                         {
@@ -209,17 +211,18 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                                 if (Cells[neighborRow, neighborCol].isBomb == true)
                                 {
                                     // Increment the current cell's NumberOfBombNeighbors
-                                    currentCell.NumberOfBombNeighbors++;
+                                    bombsFound++;
                                 }
                             }
                             // Increment our count to show we check that spot
                             count++;
                         }
+                        currentCell.SetNumberOfBombNeighbors(bombsFound);
                     }
                     else
                     {
                         // If the current cell is a bomb, set its NumberOfBombNeighbors to 9 to indicate that it is a bomb and not a number cell
-                        currentCell.NumberOfBombNeighbors = 9;
+                        currentCell.SetNumberOfBombNeighbors(9);
                     }
                 }
             }
@@ -360,7 +363,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             if (checkOrFlag == 1)
             {
                 // If not, show the cell
-                currentCell.isVisited = true;
+                currentCell.SetVisited(true);
 
                 // Check if the cell has a special reward
                 if (currentCell.HasSpecialReward == true)
@@ -374,7 +377,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             else if (checkOrFlag == 2)
             {
                 // If yes, flag the cell
-                currentCell.isFlagged = true;
+                currentCell.SetFlagged(true);
             }
         }
 
@@ -390,6 +393,15 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             CellModel currentCell = Cells[y, x];
             // Return if the cell is a bomb
             return currentCell.isBomb;
+        }
+
+        /// <summary>
+        /// Decreases the number of rewards by 1
+        /// </summary>
+        public void DecrementRewards()
+        {
+            // Decrease rewards
+            RewardsRemaining--;
         }
     }
 }

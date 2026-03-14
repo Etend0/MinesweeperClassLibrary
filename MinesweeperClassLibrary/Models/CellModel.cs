@@ -20,11 +20,11 @@ namespace MinesweeperClassLibrary.Models
         public int Row { get; private set; }
         public int Column { get; private set; }
         public String Type { get; private set; }
-        public bool isVisited { get; set; }
-        public bool isBomb { get; set; }
-        public bool isFlagged { get; set; }
-        public int NumberOfBombNeighbors { get; set; }
-        public bool HasSpecialReward { get; set; }
+        public bool isVisited { get; private set; }
+        public bool isBomb { get; private set; }
+        public bool isFlagged { get; private set; }
+        public int NumberOfBombNeighbors { get; private set; }
+        public bool HasSpecialReward { get; private set; }
 
         /// <summary>
         /// Default constructor for the cell model
@@ -38,6 +38,37 @@ namespace MinesweeperClassLibrary.Models
             this.isBomb = isBomb;
             this.isFlagged = isFlagged;
             NumberOfBombNeighbors = numberOfBombNeighbors;
+            HasSpecialReward = hasSpecialReward;
+        }
+
+        /// <summary>
+        /// Sets the visited bool of the cell
+        /// </summary>
+        /// <param name="visited"></param>
+        public void SetVisited(bool visited)
+        {
+            // Set the isVisited property to the value of visited
+            isVisited = visited;
+        }
+
+        // Sets the flagged bool of the cell
+        public void SetFlagged(bool flagged)
+        {
+            // Set the isFlagged property to the value of flagged
+            isFlagged = flagged;
+        }
+
+        // Sets the number of bombs surrounding the cell
+        public void SetNumberOfBombNeighbors(int numberOfBombNeighbors)
+        {
+            // Set the NumberOfBombNeighbors property to the value of numberOfBombNeighbors
+            NumberOfBombNeighbors = numberOfBombNeighbors;
+        }
+
+        // Sets the has special reward bool of the cell
+        public void SetHasSpecialReward(bool hasSpecialReward)
+        {
+            //  Set the HasSpecialReward property to the value of hasSpecialReward
             HasSpecialReward = hasSpecialReward;
         }
 

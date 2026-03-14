@@ -162,11 +162,8 @@ namespace MinesweeperConsoleApp
                     continue;
                 }
 
-                // Parse the input into an integer
-                int inputCheck = int.Parse(input);
-
                 // Check to see if the user tries to use a number other than 1 or 2 when we have to rewards
-                if (inputCheck > 2 && minesweeperLogic.RewardsRemaining == 0)
+                if (checkOrFlag > 2 && minesweeperLogic.RewardsRemaining == 0)
                 {
                     // If so, prompt the user to enter 1 or 2 and skip the rest
                     Console.WriteLine("Please input 1 or 2");
@@ -174,14 +171,14 @@ namespace MinesweeperConsoleApp
                 }
 
                 // Check if the user tries to use 3 to use a reward when they have rewards available
-                if (inputCheck == 3 && minesweeperLogic.RewardsRemaining > 0)
+                if (checkOrFlag == 3 && minesweeperLogic.RewardsRemaining > 0)
                 {
                     // Check if the cell is a bomb
                     bool checkBomb = minesweeperLogic.IdentifyCell(x, y);
                     // Print back results
                     Console.WriteLine("Is it a bomb? " + checkBomb);
                     // Take away reward
-                    minesweeperLogic.RewardsRemaining--;
+                    minesweeperLogic.DecrementRewards();
                 }
                 else
                 {
