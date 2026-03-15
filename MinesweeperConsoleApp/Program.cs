@@ -157,7 +157,7 @@ namespace MinesweeperConsoleApp
                 else
                 {
                     // If the user's input is not a valid integer, display an error message and prompt them again
-                    Console.WriteLine("Invalid input for row number. Please enter a valid integer.");
+                    Console.WriteLine("Invalid input. Please enter a valid integer.");
                     // Skip the rest of the loop
                     continue;
                 }

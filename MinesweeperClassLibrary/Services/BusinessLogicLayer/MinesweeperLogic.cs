@@ -170,35 +170,43 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                             // Update the neighbor row and column based on the current count to check each of the 8 neighboring positions
                             switch (count)
                             {
-                                case 0: // Top
+                                case 0: 
+                                    // Top
                                     neighborRow = y - 1;
                                     neighborCol = x;
                                     break;
-                                case 1: // Right Diagonal Top
+                                case 1: 
+                                    // Right Diagonal Top
                                     neighborRow = y - 1;
                                     neighborCol = x + 1;
                                     break;
-                                case 2: // Right
+                                case 2: 
+                                    // Right
                                     neighborRow = y;
                                     neighborCol = x + 1;
                                     break;
-                                case 3: // Right Diagonal Bottom
+                                case 3: 
+                                    // Right Diagonal Bottom
                                     neighborRow = y + 1;
                                     neighborCol = x + 1;
                                     break;
-                                case 4: // Bottom
+                                case 4: 
+                                    // Bottom
                                     neighborRow = y + 1;
                                     neighborCol = x;
                                     break;
-                                case 5: // Left Diagonal Bottom
+                                case 5: 
+                                    // Left Diagonal Bottom
                                     neighborRow = y + 1;
                                     neighborCol = x - 1;
                                     break;
-                                case 6: // Left
+                                case 6: 
+                                    // Left
                                     neighborRow = y;
                                     neighborCol = x - 1;
                                     break;
-                                case 7: // Left Diagonal Top
+                                case 7: 
+                                    // Left Diagonal Top
                                     neighborRow = y - 1;
                                     neighborCol = x - 1;
                                     break;
