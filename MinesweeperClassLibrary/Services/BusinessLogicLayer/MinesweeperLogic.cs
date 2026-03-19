@@ -23,6 +23,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         public int DifficultyLevels { get; private set; }
         public int Size { get; private set; }
         public CellModel[,] Cells { get; private set; }
+        public BoardModel board { get; private set; }
 
         /// <summary>
         ///  Set the current game state
@@ -367,16 +368,23 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             // Check if we're flagging the cell
             if (checkOrFlag == 1)
             {
-                // If not, show the cell
-                currentCell.SetVisited(true);
-
-                // Check if the cell has a special reward
-                if (currentCell.HasSpecialReward == true)
+                if (currentCell.isBomb == true || currentCell.HasSpecialReward == true || currentCell.NumberOfBombNeighbors > 0)
                 {
-                    // Increment RewardsRemaining
-                    RewardsRemaining++;
-                    // If yes, show the reward message
-                    Console.WriteLine("You found a reward!");
+                    // If not, show the cell
+                    currentCell.SetVisited(true);
+
+                    // Check if the cell has a special reward
+                    if (currentCell.HasSpecialReward == true)
+                    {
+                        // Increment RewardsRemaining
+                        RewardsRemaining++;
+                        // If yes, show the reward message
+                        Console.WriteLine("You found a reward!");
+                    }
+                }
+                else
+                {
+                    FloodFill(board, currentCell.Row, currentCell.Column);
                 }
             }
             else if (checkOrFlag == 2)
@@ -407,6 +415,74 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         {
             // Decrease rewards
             RewardsRemaining--;
+        }
+
+        /// <summary>
+        /// Get the board model from program
+        /// </summary>
+        /// <param name="board"></param>
+        public void GetBoard(BoardModel board)
+        {
+            this.board = board;
+        }
+
+        /// <summary>
+        /// Fill the board with an algorithm on the given row and col
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        public BoardModel FloodFill(BoardModel board, int row, int col)
+        {
+            // Change the text color to white
+            Console.ForegroundColor = ConsoleColor.White;
+
+            // Check if the cell is on the board
+            if (row < 0 || row >= board.Size || col < 0 || col >= board.Size)
+            {
+                // If the cell is not on the board, end the method
+                return board;
+            }
+
+            // Get the current cell and its type and number of bomb neighbors
+            CellModel currentCell = Cells[row, col];
+
+            // If the cell is a bomb, already visited, or a reward, end the method
+            if (currentCell.isBomb || currentCell.isVisited || currentCell.HasSpecialReward)
+            {
+                return board;
+            }
+
+            // Reveal the cell
+            currentCell.SetVisited(true);
+
+            // Call the FloodFill method to the east
+            board = FloodFill(board, row, col + 1);
+
+            // Call the FloodFill method to the north
+            board = FloodFill(board, row - 1, col);
+
+            // Call the FloodFill method to the south
+            board = FloodFill(board, row + 1, col);
+
+            // Call the FloodFill method to the west
+            board = FloodFill(board, row, col - 1);
+
+            // Call the FloodFill method to the north-east
+            board = FloodFill(board, row - 1, col + 1);
+
+            // Call the FloodFill method to the north-west
+            board = FloodFill(board, row - 1, col - 1);
+
+            // Call the FloodFill method to the south-east
+            board = FloodFill(board, row + 1, col + 1);
+
+            // Call the FloodFill method to the south-west
+            board = FloodFill(board, row + 1, col - 1);
+
+            // Return the board
+            return board;
         }
     }
 }

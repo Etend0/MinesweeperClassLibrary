@@ -21,6 +21,7 @@ namespace MinesweeperConsoleApp
         // Variable to track if the player has lost the game
         static bool death;
 
+        // Variable to track the current state of the game (still playing, won, or lost)
         static String state;
 
         // Create an instance of the MinesweeperLogic
@@ -45,6 +46,8 @@ namespace MinesweeperConsoleApp
 
             // Display the answer keys for the first board
             Console.WriteLine("Here is the answer key for the first board");
+            // Set the board model for the game logic
+            minesweeperLogic.GetBoard(board);
             // Get the size of the board
             minesweeperLogic.GetSize(board.Size);
             // Set up the rewards on the board
@@ -233,7 +236,5 @@ namespace MinesweeperConsoleApp
             // Print the answer key for the board
             minesweeperLogic.PrintAnswers(true);
         }
-
-
     }
 }

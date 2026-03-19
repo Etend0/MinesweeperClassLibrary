@@ -80,5 +80,20 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         /// Decreases the current reward count by one
         /// </summary>
         void DecrementRewards();
+
+        /// <summary>
+        /// Gets the board model from the program
+        /// </summary>
+        /// <param name="board"></param>
+        void GetBoard(BoardModel board);
+
+        /// <summary>
+        /// Floods the board starting from the specified cell, revealing all connected cells that are not bombs
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        BoardModel FloodFill(BoardModel board, int row, int col);
     }
 }
