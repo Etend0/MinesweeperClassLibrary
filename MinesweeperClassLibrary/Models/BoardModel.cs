@@ -36,7 +36,7 @@ namespace MinesweeperClassLibrary.Models
             {
                 // Very Easy
                 case 0:
-                    Size = 4;
+                    Size = 6;
                     break;
                 // Easy
                 case 1:

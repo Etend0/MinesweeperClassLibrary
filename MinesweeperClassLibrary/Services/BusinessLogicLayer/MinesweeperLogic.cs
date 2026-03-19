@@ -45,7 +45,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             return Size;
         }
 
-        public CellModel[,] SetupRewards(CellModel[,] Cells)
+        public CellModel[,] SetupRewards(CellModel[,] Cells, double rateOfRewards)
         {
             // Grab the current list of cells and set it to the class property
             this.Cells = Cells;
@@ -53,8 +53,8 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             Random random = new Random();
             // Calculate the total number of cells on the board
             int GridSize = Size * Size;
-            // Calculate the number of rewards to place based on 7% of the total cells
-            double numberOfRewards = GridSize * 0.07;
+            // Calculate the number of rewards to place based on the given rateOfRewards
+            double numberOfRewards = GridSize * rateOfRewards;
             // Randomly select a row position for the reward
             int Row = random.Next(0, Size);
             // Randomly select a column position for the reward
@@ -88,7 +88,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         /// </summary>
         /// <param name="Cells"></param>
         /// <returns></returns>
-        public CellModel[,] SetupBombs(CellModel[,] Cells)
+        public CellModel[,] SetupBombs(CellModel[,] Cells, double rateOfBombs)
         {
             // Grab the current list of cells and set it to the class property
             this.Cells = Cells;
@@ -99,11 +99,8 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             // Calculate the total number of cells on the board
             int GridSize = Size * Size;
 
-            // Calculate the number of bombs to place based on 15% of the total cells
-            double NumberOfBombs = GridSize * 0.15;
-
-            // Calculate the number of rewards to place based on 7% of the total cells
-            double numberOfRewards = GridSize * 0.07;
+            // Calculate the number of bombs to place based on rateOfBombs
+            double NumberOfBombs = GridSize * rateOfBombs;
 
             // Randomly select a row position for the bomb
             int Row = random.Next(0, Size);

@@ -39,14 +39,14 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         /// </summary>
         /// <param name="Cells"></param>
         /// <returns></returns>
-        CellModel[,] SetupRewards(CellModel[,] Cells);
+        CellModel[,] SetupRewards(CellModel[,] Cells, double rateOfRwards);
 
         /// <summary>
         /// Method to setup the bombs on the board
         /// </summary>
         /// <param name="Cells"></param>
         /// <returns></returns>
-        CellModel[,] SetupBombs(CellModel[,] Cells);
+        CellModel[,] SetupBombs(CellModel[,] Cells, double rateOfBombs);
 
         /// <summary>
         /// Method to count the number of bombs surrounding each cell

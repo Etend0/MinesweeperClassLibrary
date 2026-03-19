@@ -48,9 +48,9 @@ namespace MinesweeperConsoleApp
             // Get the size of the board
             minesweeperLogic.GetSize(board.Size);
             // Set up the rewards on the board
-            minesweeperLogic.SetupRewards(board.Cells);
+            minesweeperLogic.SetupRewards(board.Cells, 0.02);
             // Set up the bombs on the board
-            minesweeperLogic.SetupBombs(board.Cells);
+            minesweeperLogic.SetupBombs(board.Cells, 0.07);
             // Count the bombs on the board
             minesweeperLogic.CountBombs();
             // Show the answers
@@ -233,5 +233,7 @@ namespace MinesweeperConsoleApp
             // Print the answer key for the board
             minesweeperLogic.PrintAnswers(true);
         }
+
+
     }
 }
