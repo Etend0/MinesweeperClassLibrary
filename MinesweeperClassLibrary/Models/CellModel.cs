@@ -19,7 +19,7 @@ namespace MinesweeperClassLibrary.Models
         // Class level properties
         public int Row { get; private set; }
         public int Column { get; private set; }
-        public String Type { get; private set; }
+        public String Type { get; protected set; }
         public bool isVisited { get; private set; }
         public bool isBomb { get; private set; }
         public bool isFlagged { get; private set; }
@@ -84,7 +84,7 @@ namespace MinesweeperClassLibrary.Models
         /// <summary>
         /// Return the type of cell
         /// </summary>
-        public String DrawMe()
+        public virtual String DrawMe()
         {
             if (isVisited)
             {
@@ -131,7 +131,7 @@ namespace MinesweeperClassLibrary.Models
         /// <summary>
         /// Return the type of cell
         /// </summary>
-        public String DrawMeCheat()
+        public virtual String DrawMeCheat()
         {
             // If the type is B, we know it's a bomb
             if (isBomb)

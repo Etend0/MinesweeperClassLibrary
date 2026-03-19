@@ -74,7 +74,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                 if (Cells[Row, Column].HasSpecialReward != true)
                 {
                     // Create the reward
-                    Cells[Row, Column] = new CellModel(Row, Column, " ", false, false, false, 0, true);
+                    Cells[Row, Column] = new RewardCellModel(Row, Column);
                     // Increment the rewards placed counter
                     rewardsPlaced++;
                 }
@@ -130,7 +130,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                 if (Cells[Row, Column].isBomb != true && Cells[Row, Column].HasSpecialReward != true)
                 {
                     // Create the bomb
-                    Cells[Row, Column] = new CellModel(Row, Column, " ", false, true, false, 0, false);
+                    Cells[Row, Column] = new BombCellModel(Row, Column);
 
                     // Increment the bombs placed counter
                     bombsPlaced++;
