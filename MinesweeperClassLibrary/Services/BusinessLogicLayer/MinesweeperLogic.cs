@@ -457,6 +457,12 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             // Reveal the cell
             currentCell.SetVisited(true);
 
+            // If the cell has bombs around it, don't go through it
+            if (currentCell.NumberOfBombNeighbors > 0)
+            {
+                return board;
+            }
+
             // Call the FloodFill method to the east
             board = FloodFill(board, row, col + 1);
 

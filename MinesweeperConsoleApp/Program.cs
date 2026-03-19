@@ -46,7 +46,7 @@ namespace MinesweeperConsoleApp
 
             // Display the answer keys for the first board
             Console.WriteLine("Here is the answer key for the first board");
-            // Set the board model for the game logic
+            // Set the board model for the MinesweeperLogic
             minesweeperLogic.GetBoard(board);
             // Get the size of the board
             minesweeperLogic.GetSize(board.Size);
