@@ -28,7 +28,7 @@ namespace MinesweeperConsoleApp
         static IMinesweeperLogic minesweeperLogic = new MinesweeperLogic();
 
         // Create a new board with difficulty level 1
-        static BoardModel board = new BoardModel(0);
+        static BoardModel board = new BoardModel(3);
 
         static void Main(string[] args)
         {
