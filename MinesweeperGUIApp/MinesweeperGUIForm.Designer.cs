@@ -1,6 +1,6 @@
 ﻿namespace MinesweeperGUIApp
 {
-    partial class MineseeperGUIForm
+    partial class MinesweeperGUIForm
     {
         /// <summary>
         ///  Required designer variable.

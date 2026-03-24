@@ -392,6 +392,11 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                 // If yes, flag the cell
                 currentCell.SetFlagged(true);
             }
+            else if (checkOrFlag == 0)
+            {
+                // Unflag the cell
+                currentCell.SetFlagged(false);
+            }
         }
 
         /// <summary>
@@ -452,6 +457,12 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             if (currentCell.isBomb || currentCell.isVisited || currentCell.HasSpecialReward)
             {
                 return board;
+            }
+
+            // Clear the flag if the cell was flagged
+            if (currentCell.isFlagged)
+            {
+                currentCell.SetFlagged(false);
             }
 
             // Reveal the cell
