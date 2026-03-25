@@ -8,7 +8,7 @@ namespace StartNewGameGUI
         private int _difficultyLevel;
 
         // Boolean variable to check if difficulty level is set
-        private bool notSet = true;
+        private bool _notSet = true;
 
         /// <summary>
         /// NewGameForm constructor
@@ -63,7 +63,8 @@ namespace StartNewGameGUI
                         break;
                 }
 
-                notSet = false;
+                // Set the notSet variable to false
+                _notSet = false;
 
                 // Close the form
                 this.Close();
@@ -81,6 +82,7 @@ namespace StartNewGameGUI
         /// <param name="difficultyLevel"></param>
         public void GetDifficultyLevel(out int difficultyLevel)
         {
+            // Set the difficulty level to the class level variable
             difficultyLevel = _difficultyLevel;
         }
     }

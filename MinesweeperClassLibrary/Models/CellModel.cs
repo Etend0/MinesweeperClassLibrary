@@ -114,10 +114,12 @@ namespace MinesweeperClassLibrary.Models
             }
             else
             {
+                // If the cell if not flagged, we should print a question mark
                 if (isFlagged == false)
                 {
                     Type = "? ";
                 }
+                // Otherwise we should print an F
                 else
                 {
                     Type = "F ";

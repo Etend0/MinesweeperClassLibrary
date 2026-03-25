@@ -48,7 +48,7 @@
             label1.AutoSize = true;
             label1.Location = new Point(780, 63);
             label1.Name = "label1";
-            label1.Size = new Size(61, 15);
+            label1.Size = new Size(60, 15);
             label1.TabIndex = 1;
             label1.Text = "Start Time";
             // 
@@ -57,7 +57,7 @@
             lblStartTime.AutoSize = true;
             lblStartTime.Location = new Point(780, 87);
             lblStartTime.Name = "lblStartTime";
-            lblStartTime.Size = new Size(65, 15);
+            lblStartTime.Size = new Size(64, 15);
             lblStartTime.TabIndex = 2;
             lblStartTime.Text = "GameTime";
             // 
@@ -87,8 +87,9 @@
             BtnRestart.TabIndex = 5;
             BtnRestart.Text = "Restart";
             BtnRestart.UseVisualStyleBackColor = true;
+            BtnRestart.Click += this.BtnResetGameEH;
             // 
-            // MineseeperGUIForm
+            // MinesweeperGUIForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -99,7 +100,7 @@
             Controls.Add(lblStartTime);
             Controls.Add(label1);
             Controls.Add(pnlMinesweeperBoard);
-            Name = "MineseeperGUIForm";
+            Name = "MinesweeperGUIForm";
             Text = "Minesweeper";
             ResumeLayout(false);
             PerformLayout();

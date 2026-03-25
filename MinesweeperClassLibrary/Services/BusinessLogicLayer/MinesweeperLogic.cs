@@ -384,6 +384,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
                 }
                 else
                 {
+                    // If the cell is empty, flood fill the area
                     FloodFill(board, currentCell.Row, currentCell.Column);
                 }
             }
