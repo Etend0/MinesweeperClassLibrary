@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="FrmGetUser/GetNameGUIApp.csproj" Id="160aed5f-82ed-440f-a601-27e3009ef4bf" />
+  <Project Path="FrmHighscores/HighscoresGUIApp.csproj" Id="c55df03b-504b-4938-bd34-e60c0500fa6b" />
   <Project Path="MinesweeperClassLibrary.Tests/MinesweeperClassLibrary.Tests.csproj" />
   <Project Path="MinesweeperClassLibrary/MinesweeperClassLibrary.csproj" />
   <Project Path="MinesweeperConsoleApp/MinesweeperConsoleApp.csproj" />

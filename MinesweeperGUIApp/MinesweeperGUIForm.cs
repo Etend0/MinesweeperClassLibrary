@@ -1,6 +1,9 @@
 using MinesweeperClassLibrary.Models;
 using MinesweeperClassLibrary.Services.BusinessLogicLayer;
 using StartNewGameGUI;
+using FrmGetUser;
+using FrmHighscores;
+using MinesweeperClassLibrary.Services.MinesweeperDAO;
 
 namespace MinesweeperGUIApp
 {
@@ -12,11 +15,23 @@ namespace MinesweeperGUIApp
         // Create an instance of the NewGameForm
         public NewGameForm _newGameForm = new NewGameForm();
 
+        // Create an instance of the FrmGetName form
+        public FrmGetName _getNameForm = new FrmGetName();
+
+        // Create an instance of the FrmHighscores form
+        public FrmHighscores.FrmHighscores _highscoresForm = new FrmHighscores.FrmHighscores();
+
+        // Create an instance of the MinesweeperDAO
+        private MinesweeperDAO _minesweeperDAO = new MinesweeperDAO();
+
         // Create a new board with difficulty level 1
         private BoardModel _board;
 
         // 2D array of buttons for the chess board
         private Button[,] _buttons;
+
+        // Object to represent the player at the end of the game
+        private GameState _player;
 
         // Variable to track the current difficulty level of the game
         private int _gameDifficulty;
@@ -259,7 +274,14 @@ namespace MinesweeperGUIApp
                     // Set the score to 0 to initialize
                     int score = 0;
                     // Show a message box with the score by using the CalculateScore method
-                    System.Windows.Forms.MessageBox.Show("Congratulations! You won! Your score is " + CalculateScore(score));
+                    //System.Windows.Forms.MessageBox.Show("Congratulations! You won! Your score is " + CalculateScore(score));
+                    // Set the score label to the calculated score
+                    _getNameForm.score = CalculateScore(score);
+                    // Show the get name form to enter the user's name and display the score
+                    _getNameForm.ShowDialog();
+                    GameState gameState = new GameState(0, _getNameForm.returnString(_getNameForm.Name), CalculateScore(score), TimeSpan.FromSeconds(_elapsedSeconds));
+                    _minesweeperDAO.AddPlayerScore(gameState);
+                    _minesweeperDAO.WriteScoreToFile();
                     break;
 
                 // If we have lost, set death to true

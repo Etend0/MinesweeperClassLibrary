@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FrmGetUser\GetNameGUIApp.csproj" />
+    <ProjectReference Include="..\FrmHighscores\HighscoresGUIApp.csproj" />
     <ProjectReference Include="..\MinesweeperClassLibrary\MinesweeperClassLibrary.csproj" />
     <ProjectReference Include="..\StartNewGameGUI\StartNewGameGUI.csproj" />
   </ItemGroup>
