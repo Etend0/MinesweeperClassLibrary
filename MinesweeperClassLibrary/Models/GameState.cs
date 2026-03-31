@@ -20,5 +20,12 @@ namespace MinesweeperClassLibrary.Models
             Score = score;
             this.Date = DateTime.Now;
         }
+
+        public void setId(int id) { Id = id; }
+
+        public int getId() { return Id; }
+        public string getName() { return Name; }
+        public int getScore() { return Score; }
+        public DateTime getDate() { return Date; }
     }
 }

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FrmGetUser\GetNameGUIApp.csproj" />
+    <ProjectReference Include="..\MinesweeperClassLibrary\MinesweeperClassLibrary.csproj" />
   </ItemGroup>
 
 </Project>

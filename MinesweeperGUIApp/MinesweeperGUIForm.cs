@@ -418,5 +418,28 @@ namespace MinesweeperGUIApp
             // Start the timer
             gameTimer.Start();
         }
+
+        /// <summary>
+        /// Method to show the highscores
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void BtnHighscoresEH(object? sender, EventArgs e)
+        {
+            ShowHighscores();
+        }
+
+        /// <summary>
+        /// Show the highscores in the FrmHighscores data grid
+        /// </summary>
+        public void ShowHighscores()
+        {
+            _minesweeperDAO.ReadScoresFromFile();
+            // Get the list of scores from the DAO
+            var scores = _minesweeperDAO.GetScoresList();
+            // Pass the list to the highscores form and display it
+            //_highscoresForm.SetScores(scores);
+            _highscoresForm.ShowDialog();
+        }
     }
 }

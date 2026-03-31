@@ -13,13 +13,27 @@ namespace MinesweeperClassLibrary.Services.MinesweeperDAO
         // Class level variables
         private List<GameState> _playerScores;
 
+        /// <summary>
+        /// Constructor for MinesweeperDAO
+        /// </summary>
         public MinesweeperDAO()
         {
             _playerScores = new List<GameState>();
         }
 
+        /// <summary>
+        /// Add a player score to the list
+        /// </summary>
+        /// <param name="gameState"></param>
+        /// <returns></returns>
         public int AddPlayerScore(GameState gameState)
         {
+            int listSize = _playerScores.Count;
+
+            if (listSize > 0)
+            {
+                gameState.setId(listSize);
+            }
             _playerScores.Add(gameState);
             return _playerScores.Count;
         }
@@ -34,33 +48,36 @@ namespace MinesweeperClassLibrary.Services.MinesweeperDAO
             return _playerScores;
         }
 
+        public void ClearScores()
+        {
+            _playerScores.Clear();
+        }
+
         public bool WriteScoreToFile()
         {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
-            if (!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-            }
+            string dirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+            string filePath = Path.Combine(dirPath, "PlayerScores.txt");
+
+            if (!Directory.Exists(dirPath))
+                Directory.CreateDirectory(dirPath);
+
             try
             {
-                // Set Ids to match their position in the list (1-based)
-                for (int i = 0; i < _playerScores.Count; i++)
+                // Option 1: Overwrite the file with all current scores (cleanest)
+                using (StreamWriter streamWriter = new StreamWriter(filePath, append: false))  // false = overwrite
                 {
-                    typeof(GameState).GetProperty("Id").SetValue(_playerScores[i], i + 1);
-                }
-                using (StreamWriter streamWriter = new StreamWriter(Path.Combine(filePath, "PlayerScores.txt")))
-                {
-                    foreach (GameState gameState in _playerScores)
+                    foreach (var score in _playerScores)   // Use DAO's own list
                     {
                         string scoreString =
-                            $"Id: {gameState.Id}\n" +
-                            $"Name: {gameState.Name}\n" +
-                            $"Score: {gameState.Score}\n" +
-                            $"Date: {gameState.Date:O}\n";
-                        streamWriter.WriteLine(scoreString);
-                        streamWriter.WriteLine(); // Blank line between records
+                            $"Id: {score.Id}\n" +
+                            $"Name: {score.Name}\n" +
+                            $"Score: {score.Score}\n" +
+                            $"Date: {score.Date:O}\n\n";
+
+                        streamWriter.Write(scoreString);
                     }
                 }
+
                 return true;
             }
             catch

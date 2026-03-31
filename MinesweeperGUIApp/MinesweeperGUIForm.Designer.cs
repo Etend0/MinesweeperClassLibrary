@@ -34,6 +34,7 @@
             lblScore = new Label();
             label3 = new Label();
             BtnRestart = new Button();
+            btnScores = new Button();
             SuspendLayout();
             // 
             // pnlMinesweeperBoard
@@ -87,13 +88,24 @@
             BtnRestart.TabIndex = 5;
             BtnRestart.Text = "Restart";
             BtnRestart.UseVisualStyleBackColor = true;
-            BtnRestart.Click += this.BtnResetGameEH;
+            BtnRestart.Click += BtnResetGameEH;
+            // 
+            // btnScores
+            // 
+            btnScores.Location = new Point(815, 616);
+            btnScores.Name = "btnScores";
+            btnScores.Size = new Size(75, 23);
+            btnScores.TabIndex = 6;
+            btnScores.Text = "See Scores";
+            btnScores.UseVisualStyleBackColor = true;
+            btnScores.Click += BtnHighscoresEH;
             // 
             // MinesweeperGUIForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(942, 774);
+            Controls.Add(btnScores);
             Controls.Add(BtnRestart);
             Controls.Add(lblScore);
             Controls.Add(label3);
@@ -114,5 +126,6 @@
         private Label lblScore;
         private Label label3;
         private Button BtnRestart;
+        private Button btnScores;
     }
 }

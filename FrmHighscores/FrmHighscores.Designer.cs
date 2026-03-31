@@ -28,36 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            dataGridView1 = new DataGridView();
-            menuStrip1 = new MenuStrip();
+            dtgdHighscores = new DataGridView();
+            mnuOptions = new MenuStrip();
             toolStripMenuItem1 = new ToolStripMenuItem();
-            sortToolStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
             loadToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
+            sortToolStripMenuItem = new ToolStripMenuItem();
             byNameToolStripMenuItem = new ToolStripMenuItem();
             byScoreToolStripMenuItem = new ToolStripMenuItem();
             byDateToolStripMenuItem = new ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dtgdHighscores).BeginInit();
+            mnuOptions.SuspendLayout();
             SuspendLayout();
             // 
-            // dataGridView1
+            // dtgdHighscores
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 35);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(561, 403);
-            dataGridView1.TabIndex = 0;
+            dtgdHighscores.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dtgdHighscores.Location = new Point(12, 35);
+            dtgdHighscores.Name = "dtgdHighscores";
+            dtgdHighscores.Size = new Size(561, 403);
+            dtgdHighscores.TabIndex = 0;
             // 
-            // menuStrip1
+            // mnuOptions
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, sortToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(583, 24);
-            menuStrip1.TabIndex = 1;
-            menuStrip1.Text = "mnuOptions";
+            mnuOptions.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, sortToolStripMenuItem });
+            mnuOptions.Location = new Point(0, 0);
+            mnuOptions.Name = "mnuOptions";
+            mnuOptions.Size = new Size(583, 24);
+            mnuOptions.TabIndex = 1;
+            mnuOptions.Text = "mnuOptions";
             // 
             // toolStripMenuItem1
             // 
@@ -65,13 +65,6 @@
             toolStripMenuItem1.Name = "toolStripMenuItem1";
             toolStripMenuItem1.Size = new Size(37, 20);
             toolStripMenuItem1.Text = "File";
-            // 
-            // sortToolStripMenuItem
-            // 
-            sortToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { byNameToolStripMenuItem, byScoreToolStripMenuItem, byDateToolStripMenuItem });
-            sortToolStripMenuItem.Name = "sortToolStripMenuItem";
-            sortToolStripMenuItem.Size = new Size(40, 20);
-            sortToolStripMenuItem.Text = "Sort";
             // 
             // saveToolStripMenuItem
             // 
@@ -90,6 +83,13 @@
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.Size = new Size(180, 22);
             exitToolStripMenuItem.Text = "Exit";
+            // 
+            // sortToolStripMenuItem
+            // 
+            sortToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { byNameToolStripMenuItem, byScoreToolStripMenuItem, byDateToolStripMenuItem });
+            sortToolStripMenuItem.Name = "sortToolStripMenuItem";
+            sortToolStripMenuItem.Size = new Size(40, 20);
+            sortToolStripMenuItem.Text = "Sort";
             // 
             // byNameToolStripMenuItem
             // 
@@ -114,22 +114,22 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(583, 450);
-            Controls.Add(dataGridView1);
-            Controls.Add(menuStrip1);
-            MainMenuStrip = menuStrip1;
+            Controls.Add(dtgdHighscores);
+            Controls.Add(mnuOptions);
+            MainMenuStrip = mnuOptions;
             Name = "FrmHighscores";
-            Text = "Form4";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
+            Text = "Highscores";
+            ((System.ComponentModel.ISupportInitialize)dtgdHighscores).EndInit();
+            mnuOptions.ResumeLayout(false);
+            mnuOptions.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private DataGridView dataGridView1;
-        private MenuStrip menuStrip1;
+        private DataGridView dtgdHighscores;
+        private MenuStrip mnuOptions;
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripMenuItem saveToolStripMenuItem;
         private ToolStripMenuItem loadToolStripMenuItem;
