@@ -76,6 +76,9 @@ namespace MinesweeperGUIApp
             // Initialize the board (replace 0 with the selected difficulty from _newGameForm)
             _board = new BoardModel(_gameDifficulty);
 
+            // Read the scores from the file using the DAO to populate the highscores form with scores if there are any
+            _minesweeperDAO.ReadScoresFromFile();
+
             // Set the board model for the MinesweeperLogic
             _minesweeperLogic.GetBoard(_board);
             // Get the size of the board
@@ -276,7 +279,7 @@ namespace MinesweeperGUIApp
                     // Show a message box with the score by using the CalculateScore method
                     //System.Windows.Forms.MessageBox.Show("Congratulations! You won! Your score is " + CalculateScore(score));
                     // Set the score label to the calculated score
-                    _getNameForm.score = CalculateScore(score);
+                    _getNameForm.GetInt(CalculateScore(score));
                     // Show the get name form to enter the user's name and display the score
                     _getNameForm.ShowDialog();
                     GameState gameState = new GameState(0, _getNameForm.returnString(_getNameForm.Name), CalculateScore(score), TimeSpan.FromSeconds(_elapsedSeconds));
@@ -426,6 +429,7 @@ namespace MinesweeperGUIApp
         /// <param name="e"></param>
         public void BtnHighscoresEH(object? sender, EventArgs e)
         {
+            // Call the show highscores method if user clicks the button to show highscores
             ShowHighscores();
         }
 
@@ -434,11 +438,11 @@ namespace MinesweeperGUIApp
         /// </summary>
         public void ShowHighscores()
         {
+            // Read the scores from the file using the DAO
             _minesweeperDAO.ReadScoresFromFile();
-            // Get the list of scores from the DAO
-            var scores = _minesweeperDAO.GetScoresList();
-            // Pass the list to the highscores form and display it
-            //_highscoresForm.SetScores(scores);
+            // Get the form to load the scores into the data grid
+            _highscoresForm.LoadScores();
+            // Show the highscores form
             _highscoresForm.ShowDialog();
         }
     }

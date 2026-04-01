@@ -5,15 +5,25 @@ namespace FrmGetUser
         // Variable to hold the name of the user
         string _name = " ";
         // Variable to hold the score of the user
-        public int score;
+        private int score;
 
         // Constructor for the form
         public FrmGetName()
         {
+            // Initialize the form components
             InitializeComponent();
         }
 
-        // Override the OnShown method to display the score when the form is shown
+        public void GetInt(int score)
+        {
+            // Set the score variable to the value of the score parameter
+            this.score = score;
+        }
+
+        /// <summary>
+        /// Method to override the OnShown method to display the score when the form is shown
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnShown(EventArgs e)
         {
             // Call the base method
@@ -43,6 +53,7 @@ namespace FrmGetUser
             {
                 // Prompt the user to enter a name
                 System.Windows.Forms.MessageBox.Show("Please enter your name.");
+                // Return to allow the user to try again
                 return;
             }
             else

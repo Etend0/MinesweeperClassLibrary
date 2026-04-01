@@ -39,9 +39,9 @@ partial class FrmGetName
             label1.AutoSize = true;
             label1.Location = new Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new Size(267, 15);
+            label1.Size = new Size(272, 15);
             label1.TabIndex = 0;
-            label1.Text = "Congratulation, you win! Please enter your name.";
+            label1.Text = "Congratulations, you win! Please enter your name.";
             // 
             // txtName
             // 
