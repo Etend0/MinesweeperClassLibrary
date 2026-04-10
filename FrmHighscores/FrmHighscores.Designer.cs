@@ -38,6 +38,11 @@
             byNameToolStripMenuItem = new ToolStripMenuItem();
             byScoreToolStripMenuItem = new ToolStripMenuItem();
             byDateToolStripMenuItem = new ToolStripMenuItem();
+            lblPlayerName = new Label();
+            lblAverageTime = new Label();
+            label1 = new Label();
+            label2 = new Label();
+            lblAverageScore = new Label();
             ((System.ComponentModel.ISupportInitialize)dtgdHighscores).BeginInit();
             mnuOptions.SuspendLayout();
             SuspendLayout();
@@ -49,6 +54,7 @@
             dtgdHighscores.Name = "dtgdHighscores";
             dtgdHighscores.Size = new Size(561, 403);
             dtgdHighscores.TabIndex = 0;
+            dtgdHighscores.CellClick += DtgdHighscores_SelectionChanged;
             // 
             // mnuOptions
             // 
@@ -69,19 +75,19 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(100, 22);
             saveToolStripMenuItem.Text = "Save";
             // 
             // loadToolStripMenuItem
             // 
             loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            loadToolStripMenuItem.Size = new Size(180, 22);
+            loadToolStripMenuItem.Size = new Size(100, 22);
             loadToolStripMenuItem.Text = "Load";
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(180, 22);
+            exitToolStripMenuItem.Size = new Size(100, 22);
             exitToolStripMenuItem.Text = "Exit";
             // 
             // sortToolStripMenuItem
@@ -94,26 +100,76 @@
             // byNameToolStripMenuItem
             // 
             byNameToolStripMenuItem.Name = "byNameToolStripMenuItem";
-            byNameToolStripMenuItem.Size = new Size(180, 22);
+            byNameToolStripMenuItem.Size = new Size(122, 22);
             byNameToolStripMenuItem.Text = "By Name";
             // 
             // byScoreToolStripMenuItem
             // 
             byScoreToolStripMenuItem.Name = "byScoreToolStripMenuItem";
-            byScoreToolStripMenuItem.Size = new Size(180, 22);
+            byScoreToolStripMenuItem.Size = new Size(122, 22);
             byScoreToolStripMenuItem.Text = "By Score";
             // 
             // byDateToolStripMenuItem
             // 
             byDateToolStripMenuItem.Name = "byDateToolStripMenuItem";
-            byDateToolStripMenuItem.Size = new Size(180, 22);
+            byDateToolStripMenuItem.Size = new Size(122, 22);
             byDateToolStripMenuItem.Text = "By Date";
+            // 
+            // lblPlayerName
+            // 
+            lblPlayerName.AutoSize = true;
+            lblPlayerName.Location = new Point(34, 477);
+            lblPlayerName.Name = "lblPlayerName";
+            lblPlayerName.Size = new Size(38, 15);
+            lblPlayerName.TabIndex = 2;
+            lblPlayerName.Text = "label1";
+            // 
+            // lblAverageTime
+            // 
+            lblAverageTime.AutoSize = true;
+            lblAverageTime.Location = new Point(167, 477);
+            lblAverageTime.Name = "lblAverageTime";
+            lblAverageTime.Size = new Size(38, 15);
+            lblAverageTime.TabIndex = 3;
+            lblAverageTime.Text = "label1";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(78, 477);
+            label1.Name = "label1";
+            label1.Size = new Size(83, 15);
+            label1.TabIndex = 4;
+            label1.Text = "Average Time:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(220, 477);
+            label2.Name = "label2";
+            label2.Size = new Size(85, 15);
+            label2.TabIndex = 6;
+            label2.Text = "Average Score:";
+            // 
+            // lblAverageScore
+            // 
+            lblAverageScore.AutoSize = true;
+            lblAverageScore.Location = new Point(309, 477);
+            lblAverageScore.Name = "lblAverageScore";
+            lblAverageScore.Size = new Size(38, 15);
+            lblAverageScore.TabIndex = 5;
+            lblAverageScore.Text = "label1";
             // 
             // FrmHighscores
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(583, 450);
+            ClientSize = new Size(583, 528);
+            Controls.Add(label2);
+            Controls.Add(lblAverageScore);
+            Controls.Add(label1);
+            Controls.Add(lblAverageTime);
+            Controls.Add(lblPlayerName);
             Controls.Add(dtgdHighscores);
             Controls.Add(mnuOptions);
             MainMenuStrip = mnuOptions;
@@ -138,5 +194,10 @@
         private ToolStripMenuItem byNameToolStripMenuItem;
         private ToolStripMenuItem byScoreToolStripMenuItem;
         private ToolStripMenuItem byDateToolStripMenuItem;
+        private Label lblPlayerName;
+        private Label lblAverageTime;
+        private Label label1;
+        private Label label2;
+        private Label lblAverageScore;
     }
 }

@@ -26,6 +26,13 @@ namespace FrmHighscores
             byNameToolStripMenuItem.Click += ByNameToolStripMenuItem_Click;
             byScoreToolStripMenuItem.Click += ByScoreToolStripMenuItem_Click;
             byDateToolStripMenuItem.Click += ByDateToolStripMenuItem_Click;
+
+            // Add event handler for DataGridView selection changed
+            dtgdHighscores.SelectionChanged += DtgdHighscores_SelectionChanged;
+
+            lblPlayerName.Text = string.Empty;
+            lblAverageTime.Text = "00:00:00";
+            lblAverageScore.Text = "0";
         }
 
         /// <summary>
@@ -156,6 +163,66 @@ namespace FrmHighscores
             var sortedScores = _playerScores.OrderByDescending(s => s.getDate()).ToList();
             // Set the sorted scores to the DataGridView
             SetScores(sortedScores);
+        }
+
+        /// <summary>
+        /// Event handler for when the selection changes in the DataGridView
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DtgdHighscores_SelectionChanged(object sender, EventArgs e)
+        {
+            // Check if any row is selected
+            if (dtgdHighscores.SelectedRows.Count > 0)
+            {
+                // Get the selected row
+                DataGridViewRow selectedRow = dtgdHighscores.SelectedRows[0];
+
+                // Get the GameState object from the selected row
+                GameState selectedScore = selectedRow.DataBoundItem as GameState;
+
+                if (selectedScore != null)
+                {
+                    // Get the player name from the selected score
+                    string playerName = selectedScore.getName();
+
+                    // Calculate and display the average time and score for this player
+                    CalculateAndDisplayAverages(playerName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculate and display the average time and score for a specific player
+        /// </summary>
+        /// <param name="playerName">The name of the player to calculate averages for</param>
+        private void CalculateAndDisplayAverages(string playerName)
+        {
+            // Filter the scores to get only the scores for the selected player
+            var playerScoresFiltered = _playerScores.Where(s => s.getName() == playerName).ToList();
+
+            // Check if there are any scores for this player
+            if (playerScoresFiltered.Count > 0)
+            {
+                // Calculate average score
+                double averageScore = playerScoresFiltered.Average(s => s.getScore());
+
+                // Calculate average time (convert DateTime to TimeSpan for averaging)
+                double averageTimeInSeconds = playerScoresFiltered.Average(s => s.getDate().TimeOfDay.TotalSeconds);
+                TimeSpan averageTime = TimeSpan.FromSeconds(averageTimeInSeconds);
+
+                // Display the results
+                lblPlayerName.Text = playerName;
+                lblAverageTime.Text = averageTime.ToString(@"hh\:mm\:ss");
+                lblAverageScore.Text = ((int)averageScore).ToString();
+            }
+            else
+            {
+                // Clear the labels if no scores found
+                lblPlayerName.Text = string.Empty;
+                lblAverageTime.Text = "00:00:00";
+                lblAverageScore.Text = "0";
+            }
         }
     }
 }

@@ -46,6 +46,12 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
             return Size;
         }
 
+        /// <summary>
+        /// Public constructor for the MinesweeperLogic class that initializes the board size, rewards remaining, and difficulty levels
+        /// </summary>
+        /// <param name="Cells"></param>
+        /// <param name="rateOfRewards"></param>
+        /// <returns></returns>
         public CellModel[,] SetupRewards(CellModel[,] Cells, double rateOfRewards)
         {
             // Grab the current list of cells and set it to the class property

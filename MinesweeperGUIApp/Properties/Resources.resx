@@ -148,6 +148,42 @@
   <data name="Number 8" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\SpriteAssets\Number 8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="OG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OG1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OG2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OG2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OG3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OG3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OG4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OG4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OG5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OG5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OG6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OG6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OG7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OG7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OG8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OG8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OGBomb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OGBomb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OGFlag" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OGFlag.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OGHidden" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OGHidden.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OGRevealed" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\OGRevealed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Skull" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\SpriteAssets\Skull.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -159,5 +195,8 @@
   </data>
   <data name="Tile Flat" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\SpriteAssets\Tile Flat.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WinMine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpriteAssets\OriginalSprites\WinMine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

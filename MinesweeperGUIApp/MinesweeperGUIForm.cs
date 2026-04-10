@@ -57,8 +57,20 @@ namespace MinesweeperGUIApp
         // Variable to store the default button size for resizing images
         private int _defButtonSize;
 
+        // Variable to track whether the player is using a reward
+        private bool _useReward = false;
+
+        // Hold the size of the button for use in resizing images when the graphics are changed
+        private int _buttonSize;
+
+        // Variable to track whether we need to set up the sprites so we don't do it more than once in SetupButtons
+        private bool _setupSprites = true;
+
         // Dictionary to cache resized images for each tile type
         private Dictionary<string, Image> _tileImages;
+
+        // Dictionary to store the original sprites for each tile type
+        private Dictionary<string, Image> _originalSprites;
 
         /// <summary>
         /// MinesweeperGUIForm constructor
@@ -96,6 +108,9 @@ namespace MinesweeperGUIApp
             // Set death to false
             _death = false;
 
+            // Hide the button for using reward
+            btnUseReward.Visible = false;
+
             // Initialize the game timer
             gameTimer = new System.Windows.Forms.Timer();
             gameTimer.Interval = 1000;
@@ -108,6 +123,9 @@ namespace MinesweeperGUIApp
 
             // Set the score
             lblScore.Text = "0";
+
+            // Set the rewards
+            lblRewards.Text = "0";
 
             // Set up the buttons on the board
             SetUpButtons();
@@ -127,33 +145,38 @@ namespace MinesweeperGUIApp
             // Initialize the 2D button array
             _buttons = new Button[_board.Size, _board.Size];
 
-            // Declare and initialize
-            // Calculate the size of each button based on
-            // the panel width and the number of buttons needs
-            int buttonSize = pnlMinesweeperBoard.Width / _board.Size;
-            // Set the panel to be square
-            pnlMinesweeperBoard.Height = pnlMinesweeperBoard.Width;
-
-            // Cache resized images for all tile types
-            _defButtonSize = buttonSize;
-
-            // Initialize the dictionary with resized images for each tile type
-            _tileImages = new Dictionary<string, Image>
+            if (_setupSprites)
             {
-                ["B"] = ResizeImage(Properties.Resources.Skull, buttonSize, buttonSize),
-                ["F"] = ResizeImage(Properties.Resources.Flag2, buttonSize, buttonSize),
-                ["R"] = ResizeImage(Properties.Resources.Gold, buttonSize, buttonSize),
-                ["?"] = ResizeImage(Properties.Resources.Tile_1, buttonSize, buttonSize),
-                ["."] = ResizeImage(Properties.Resources.Tile_Flat, buttonSize, buttonSize),
-                ["1"] = ResizeImage(Properties.Resources.Number_1, buttonSize, buttonSize),
-                ["2"] = ResizeImage(Properties.Resources.Number_2, buttonSize, buttonSize),
-                ["3"] = ResizeImage(Properties.Resources.Number_3, buttonSize, buttonSize),
-                ["4"] = ResizeImage(Properties.Resources.Number_4, buttonSize, buttonSize),
-                ["5"] = ResizeImage(Properties.Resources.Number_5, buttonSize, buttonSize),
-                ["6"] = ResizeImage(Properties.Resources.Number_6, buttonSize, buttonSize),
-                ["7"] = ResizeImage(Properties.Resources.Number_7, buttonSize, buttonSize),
-                ["8"] = ResizeImage(Properties.Resources.Number_8, buttonSize, buttonSize)
-            };
+                // Declare and initialize
+                // Calculate the size of each button based on
+                // the panel width and the number of buttons needs
+                _buttonSize = pnlMinesweeperBoard.Width / _board.Size;
+                // Set the panel to be square
+                pnlMinesweeperBoard.Height = pnlMinesweeperBoard.Width;
+
+                // Cache resized images for all tile types
+                _defButtonSize = _buttonSize;
+
+                // Initialize the dictionary with resized images for each tile type
+                _tileImages = new Dictionary<string, Image>
+                {
+                    ["B"] = ResizeImage(Properties.Resources.Skull, _buttonSize, _buttonSize, false),
+                    ["F"] = ResizeImage(Properties.Resources.Flag2, _buttonSize, _buttonSize, false),
+                    ["R"] = ResizeImage(Properties.Resources.Gold, _buttonSize, _buttonSize, false),
+                    ["?"] = ResizeImage(Properties.Resources.Tile_1, _buttonSize, _buttonSize, false),
+                    ["."] = ResizeImage(Properties.Resources.Tile_Flat, _buttonSize, _buttonSize, false),
+                    ["1"] = ResizeImage(Properties.Resources.Number_1, _buttonSize, _buttonSize, false),
+                    ["2"] = ResizeImage(Properties.Resources.Number_2, _buttonSize, _buttonSize, false),
+                    ["3"] = ResizeImage(Properties.Resources.Number_3, _buttonSize, _buttonSize, false),
+                    ["4"] = ResizeImage(Properties.Resources.Number_4, _buttonSize, _buttonSize, false),
+                    ["5"] = ResizeImage(Properties.Resources.Number_5, _buttonSize, _buttonSize, false),
+                    ["6"] = ResizeImage(Properties.Resources.Number_6, _buttonSize, _buttonSize, false),
+                    ["7"] = ResizeImage(Properties.Resources.Number_7, _buttonSize, _buttonSize, false),
+                    ["8"] = ResizeImage(Properties.Resources.Number_8, _buttonSize, _buttonSize, false)
+                };
+                // Mark that we have set up the sprites so we don't do it again in this method
+                _setupSprites = false;
+            }
 
             // Use nested for loops to loop through the boards Grid
             for (int row = 0; row < _board.Size; row++)
@@ -166,12 +189,12 @@ namespace MinesweeperGUIApp
                     // Get the current button
                     Button button = _buttons[row, col];
                     // Set the size for the button
-                    button.Width = buttonSize;
-                    button.Height = buttonSize;
+                    button.Width = _buttonSize;
+                    button.Height = _buttonSize;
                     // Set the location of the button
                     // using the left and top sides
-                    button.Left = row * buttonSize;
-                    button.Top = col * buttonSize;
+                    button.Left = row * _buttonSize;
+                    button.Top = col * _buttonSize;
 
                     // Attach a click event handler to the button
                     button.MouseDown += BtnSquareClickEH;
@@ -207,10 +230,31 @@ namespace MinesweeperGUIApp
                 // If we clicked left mouse button, we want to reveal the cell
                 if (e.Button == MouseButtons.Left)
                 {
-                    // Update the cell in the board model to be visited
-                    _minesweeperLogic.UpdateCell(row, col, 1);
-                    // Set the selected cell to the cell that was just updated
-                    _selectedCell = _board.Cells[col, row];
+                    if (!_useReward)
+                    {
+                        // Update the cell in the board model to be visited
+                        _minesweeperLogic.UpdateCell(row, col, 1);
+                        // Set the selected cell to the cell that was just updated
+                        _selectedCell = _board.Cells[col, row];
+                    }
+                    else
+                    {
+                        // If the user is using a reward, we want to reveal the cell without marking it as visited
+                        _selectedCell = _board.Cells[col, row];
+                        // Check if the selected cell is a bomb
+                        if (_selectedCell.isBomb)
+                        {
+                            // If it is a bomb, we want to update the cell to be revealed but not visited
+                            MessageBox.Show("This is a bomb!");
+                        }
+                        else
+                        {
+                            // If it is not a bomb, we want to update the cell to be revealed but not visited
+                            MessageBox.Show("This is not a bomb.");
+                        }
+                        // Set use reward back to false after using it
+                        _useReward = false;
+                    }
                 }
                 // If we clicked the right mouse button, we want to flag or unflag the cell
                 else if (e.Button == MouseButtons.Right)
@@ -233,6 +277,21 @@ namespace MinesweeperGUIApp
 
                 // Update the buttons
                 UpdateButtons();
+
+                // Check if we have rewards remaining after the user's move
+                if (_minesweeperLogic.RewardsRemaining > 0)
+                {
+                    // If we have rewards remaining, show the button to use a reward
+                    btnUseReward.Visible = true;
+                }
+                else
+                {
+                    // If we don't have any rewards remaining, hide the button to use a reward
+                    btnUseReward.Visible = false;
+                }
+
+                // Update the rewards label to show the number of rewards remaining
+                lblRewards.Text = _minesweeperLogic.RewardsRemaining.ToString();
             }
         }
 
@@ -340,16 +399,25 @@ namespace MinesweeperGUIApp
         /// <param name="img"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
+        /// <param name="changeScale"></param>
         /// <returns></returns>
-        private Image ResizeImage(Image img, int width, int height)
+        private Image ResizeImage(Image img, int width, int height, bool changeScale)
         {
             // Create a new Bitmap with the set width and height
             Bitmap bmp = new Bitmap(width, height);
             // Use a Graphics object to draw the original image onto the new Bitmap with the specified size
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                // Set the interpolation mode to high quality to make the resized image look better
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                if (!changeScale)
+                {
+                    // Set the interpolation mode to high quality to make the resized image look better
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                }
+                else
+                {
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                }
                 // Set image into the bitmap with the new size
                 g.DrawImage(img, 0, 0, width, height);
             }
@@ -411,6 +479,10 @@ namespace MinesweeperGUIApp
             lblStartTime.Text = "00:00:00";
             // Set the score label to 0
             lblScore.Text = "0";
+            // Set the rewards label to 0
+            lblRewards.Text = "0";
+            // Set the rewards button not be visible
+            btnUseReward.Visible = false;
 
             // Remove old buttons from the panel
             pnlMinesweeperBoard.Controls.Clear();
@@ -444,6 +516,66 @@ namespace MinesweeperGUIApp
             _highscoresForm.LoadScores();
             // Show the highscores form
             _highscoresForm.ShowDialog();
+        }
+
+        /// <summary>
+        /// Method to allow the user to use their reward
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void btnUseRewardEH(object? sender, EventArgs e)
+        {
+            // Set the use reward variable to true
+            _useReward = true;
+            // Decrement the rewards remaining in the game logic
+            _minesweeperLogic.DecrementRewards();
+            // Update the rewards label to show the number of rewards remaining
+            lblRewards.Text = _minesweeperLogic.RewardsRemaining.ToString();
+        }
+        private void defaultToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            // Initialize the dictionary with resized images for each tile type
+            _tileImages = new Dictionary<string, Image>
+            {
+                ["B"] = ResizeImage(Properties.Resources.Skull, _buttonSize, _buttonSize, false),
+                ["F"] = ResizeImage(Properties.Resources.Flag2, _buttonSize, _buttonSize, false),
+                ["R"] = ResizeImage(Properties.Resources.Gold, _buttonSize, _buttonSize, false),
+                ["?"] = ResizeImage(Properties.Resources.Tile_1, _buttonSize, _buttonSize, false),
+                ["."] = ResizeImage(Properties.Resources.Tile_Flat, _buttonSize, _buttonSize, false),
+                ["1"] = ResizeImage(Properties.Resources.Number_1, _buttonSize, _buttonSize, false),
+                ["2"] = ResizeImage(Properties.Resources.Number_2, _buttonSize, _buttonSize, false),
+                ["3"] = ResizeImage(Properties.Resources.Number_3, _buttonSize, _buttonSize, false),
+                ["4"] = ResizeImage(Properties.Resources.Number_4, _buttonSize, _buttonSize, false),
+                ["5"] = ResizeImage(Properties.Resources.Number_5, _buttonSize, _buttonSize, false),
+                ["6"] = ResizeImage(Properties.Resources.Number_6, _buttonSize, _buttonSize, false),
+                ["7"] = ResizeImage(Properties.Resources.Number_7, _buttonSize, _buttonSize, false),
+                ["8"] = ResizeImage(Properties.Resources.Number_8, _buttonSize, _buttonSize, false)
+            };
+            // Update the buttons to reflect the change in images
+            UpdateButtons();
+        }
+
+        private void classicToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            // Update the tile images to the original sprites
+            _tileImages = new Dictionary<string, Image>
+            {
+                ["B"] = ResizeImage(Properties.Resources.OGBomb, _buttonSize, _buttonSize, true),
+                ["F"] = ResizeImage(Properties.Resources.OGFlag, _buttonSize, _buttonSize, true),
+                ["R"] = ResizeImage(Properties.Resources.WinMine, _buttonSize, _buttonSize, true),
+                ["?"] = ResizeImage(Properties.Resources.OGHidden, _buttonSize, _buttonSize, true),
+                ["."] = ResizeImage(Properties.Resources.OGRevealed, _buttonSize, _buttonSize, true),
+                ["1"] = ResizeImage(Properties.Resources.OG1, _buttonSize, _buttonSize, true),
+                ["2"] = ResizeImage(Properties.Resources.OG2, _buttonSize, _buttonSize, true),
+                ["3"] = ResizeImage(Properties.Resources.OG3, _buttonSize, _buttonSize, true),
+                ["4"] = ResizeImage(Properties.Resources.OG4, _buttonSize, _buttonSize, true),
+                ["5"] = ResizeImage(Properties.Resources.OG5, _buttonSize, _buttonSize, true),
+                ["6"] = ResizeImage(Properties.Resources.OG6, _buttonSize, _buttonSize, true),
+                ["7"] = ResizeImage(Properties.Resources.OG7, _buttonSize, _buttonSize, true),
+                ["8"] = ResizeImage(Properties.Resources.OG8, _buttonSize, _buttonSize, true)
+            };
+            // Update the buttons to reflect the change in images
+            UpdateButtons();
         }
     }
 }
