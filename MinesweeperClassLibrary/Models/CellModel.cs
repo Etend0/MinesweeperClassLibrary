@@ -17,17 +17,32 @@ namespace MinesweeperClassLibrary.Models
     public class CellModel
     {
         // Class level properties
-        public int Row { get; private set; }
-        public int Column { get; private set; }
-        public String Type { get; protected set; }
-        public bool isVisited { get; private set; }
-        public bool isBomb { get; private set; }
-        public bool isFlagged { get; private set; }
-        public int NumberOfBombNeighbors { get; private set; }
-        public bool HasSpecialReward { get; private set; }
+        public int Row { get; set; }
+        public int Column { get; set; }
+        public String Type { get; set; }
+        public bool isVisited { get; set; }
+        public bool isBomb { get; set; }
+        public bool isFlagged { get; set; }
+        public int NumberOfBombNeighbors { get; set; }
+        public bool HasSpecialReward { get; set; }
 
         /// <summary>
-        /// Default constructor for the cell model
+        /// Default constructor for JSON serialization
+        /// </summary>
+        public CellModel()
+        {
+            Row = 0;
+            Column = 0;
+            Type = " ";
+            isVisited = false;
+            isBomb = false;
+            isFlagged = false;
+            NumberOfBombNeighbors = 0;
+            HasSpecialReward = false;
+        }
+
+        /// <summary>
+        /// Parameterized constructor for the cell model
         /// </summary>
         public CellModel(int row, int column, String type, bool isVisited, bool isBomb, bool isFlagged, int numberOfBombNeighbors, bool hasSpecialReward)
         {

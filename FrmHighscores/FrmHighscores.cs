@@ -1,6 +1,7 @@
 using MinesweeperClassLibrary.Models;
 using MinesweeperClassLibrary.Services.MinesweeperDAO;
 using static System.Windows.Forms.LinkLabel;
+using ScottPlot;
 
 namespace FrmHighscores
 {
@@ -98,6 +99,8 @@ namespace FrmHighscores
             dtgdHighscores.DataSource = null;
             // Set the DataGridView's data source to the provided list of scores
             dtgdHighscores.DataSource = scores;
+            // Update the bar chart
+            UpdateScoreChart();
         }
 
         /// <summary>
@@ -181,6 +184,7 @@ namespace FrmHighscores
                 // Get the GameState object from the selected row
                 GameState selectedScore = selectedRow.DataBoundItem as GameState;
 
+                // Check if the selectedScore is not null before proceeding
                 if (selectedScore != null)
                 {
                     // Get the player name from the selected score
@@ -207,12 +211,13 @@ namespace FrmHighscores
                 // Calculate average score
                 double averageScore = playerScoresFiltered.Average(s => s.getScore());
 
-                // Calculate average time (convert DateTime to TimeSpan for averaging)
-                double averageTimeInSeconds = playerScoresFiltered.Average(s => s.getDate().TimeOfDay.TotalSeconds);
+                // Calculate average time from the average of the total seconds and convert it back to TimeSpan
+                double averageTimeInSeconds = playerScoresFiltered.Average(s => s.getTime().TotalSeconds);
+                // Convert the average time in seconds back to TimeSpan for display
                 TimeSpan averageTime = TimeSpan.FromSeconds(averageTimeInSeconds);
 
                 // Display the results
-                lblPlayerName.Text = playerName;
+                lblPlayerName.Text = playerName + "'s";
                 lblAverageTime.Text = averageTime.ToString(@"hh\:mm\:ss");
                 lblAverageScore.Text = ((int)averageScore).ToString();
             }
@@ -223,6 +228,60 @@ namespace FrmHighscores
                 lblAverageTime.Text = "00:00:00";
                 lblAverageScore.Text = "0";
             }
+        }
+
+        /// <summary>
+        /// Update the bar chart to display scores for all of the saved scores
+        /// </summary>
+        private void UpdateScoreChart()
+        {
+            // Clear the plot
+            pltScores.Plot.Clear();
+
+            // Check if there are any scores to display
+            if (_playerScores == null || _playerScores.Count == 0)
+            {
+                // If not, refresh the plot to show an empty chart and return
+                pltScores.Refresh();
+                return;
+            }
+
+            // Grab the scores and their corresponding positions for the bar chart
+            double[] scores = _playerScores.Select(s => (double)s.getScore()).ToArray();
+            // Set the positions for the bars to be the index of each score in the list
+            double[] positions = Enumerable.Range(0, scores.Length).Select(i => (double)i).ToArray();
+
+            // Add bar plot
+            var barPlot = pltScores.Plot.Add.Bars(positions, scores);
+
+            // For each bar in the bar plot, set the fill color
+            foreach (var bar in barPlot.Bars)
+            {
+                // Set the fill color of the bars to a specific shade of blue
+                bar.FillColor = ScottPlot.Color.FromHex("#4472C4");
+            }
+
+            // Configure the plot
+            pltScores.Plot.Title("Game Scores");
+            pltScores.Plot.XLabel("Game Number");
+            pltScores.Plot.YLabel("Score");
+
+            // Set Y axis to start at 0
+            pltScores.Plot.Axes.SetLimitsY(0, scores.Max() * 1.1);
+
+            // Enable mouse to move around the plot
+            // User can left click to drag around the plot, right click and drag to zoom, or use scroll wheel
+            pltScores.UserInputProcessor.IsEnabled = true;
+
+            // If there more than 20 scores, show only the first 20 initially
+            if (scores.Length > 20)
+            {
+                // Set the X axis limits to show only the first 20 scores
+                pltScores.Plot.Axes.SetLimitsX(-0.5, 19.5);
+            }
+
+            // Refresh the plot
+            pltScores.Refresh();
         }
     }
 }

@@ -82,6 +82,11 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         void DecrementRewards();
 
         /// <summary>
+        /// Resets the reward count to zero
+        /// </summary>
+        void ResetRewards();
+
+        /// <summary>
         /// Gets the board model from the program
         /// </summary>
         /// <param name="board"></param>

@@ -17,11 +17,23 @@ namespace MinesweeperClassLibrary.Models
     public class BoardModel
     {
         // Class level properties
-        public double StartTime { get; private set; }
-        public double EndTime { get; private set; }
-        public int Size { get; private set; }
-        public CellModel[,] Cells { get; private set; }
-        public int DifficultyLevels { get; private set; }
+        public double StartTime { get; set; }
+        public double EndTime { get; set; }
+        public int Size { get; set; }
+        public CellModel[,] Cells { get; set; }
+        public int DifficultyLevels { get; set; }
+
+        /// <summary>
+        /// Default constructor for JSON serialization
+        /// </summary>
+        public BoardModel()
+        {
+            StartTime = 0;
+            EndTime = 0;
+            Size = 0;
+            Cells = null;
+            DifficultyLevels = 0;
+        }
 
         /// <summary>
         /// Parameterized constructor for the board model class

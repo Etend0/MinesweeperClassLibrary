@@ -43,6 +43,7 @@
             label1 = new Label();
             label2 = new Label();
             lblAverageScore = new Label();
+            pltScores = new ScottPlot.WinForms.FormsPlot();
             ((System.ComponentModel.ISupportInitialize)dtgdHighscores).BeginInit();
             mnuOptions.SuspendLayout();
             SuspendLayout();
@@ -61,7 +62,7 @@
             mnuOptions.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, sortToolStripMenuItem });
             mnuOptions.Location = new Point(0, 0);
             mnuOptions.Name = "mnuOptions";
-            mnuOptions.Size = new Size(583, 24);
+            mnuOptions.Size = new Size(996, 24);
             mnuOptions.TabIndex = 1;
             mnuOptions.Text = "mnuOptions";
             // 
@@ -160,11 +161,19 @@
             lblAverageScore.TabIndex = 5;
             lblAverageScore.Text = "label1";
             // 
+            // pltScores
+            // 
+            pltScores.Location = new Point(579, 35);
+            pltScores.Name = "pltScores";
+            pltScores.Size = new Size(405, 403);
+            pltScores.TabIndex = 7;
+            // 
             // FrmHighscores
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(583, 528);
+            ClientSize = new Size(996, 528);
+            Controls.Add(pltScores);
             Controls.Add(label2);
             Controls.Add(lblAverageScore);
             Controls.Add(label1);
@@ -199,5 +208,6 @@
         private Label label1;
         private Label label2;
         private Label lblAverageScore;
+        private ScottPlot.WinForms.FormsPlot pltScores;
     }
 }

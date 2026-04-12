@@ -430,6 +430,15 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         }
 
         /// <summary>
+        /// Resets the number of rewards to 0
+        /// </summary>
+        public void ResetRewards()
+        {
+            // Reset rewards to 0
+            RewardsRemaining = 0;
+        }
+
+        /// <summary>
         /// Get the board model from program
         /// </summary>
         /// <param name="board"></param>

@@ -79,6 +79,10 @@ namespace MinesweeperGUIApp
         {
             InitializeComponent();
 
+            // Register event handlers for save/load menu items
+            saveGameToolStripMenuItem.Click += SaveGameToolStripMenuItem_Click;
+            loadGameToolStripMenuItem.Click += LoadGameToolStripMenuItem_Click;
+
             // Show the difficulty form
             _newGameForm.ShowDialog();
 
@@ -460,6 +464,8 @@ namespace MinesweeperGUIApp
             _minesweeperLogic.GetBoard(_board);
             // Get the size of the board
             _minesweeperLogic.GetSize(_board.Size);
+            // Reset the rewards counter
+            _minesweeperLogic.ResetRewards();
             // Set up the rewards on the board
             _minesweeperLogic.SetupRewards(_board.Cells, 0.02);
             // Set up the bombs on the board
@@ -525,13 +531,22 @@ namespace MinesweeperGUIApp
         /// <param name="e"></param>
         public void btnUseRewardEH(object? sender, EventArgs e)
         {
-            // Set the use reward variable to true
-            _useReward = true;
-            // Decrement the rewards remaining in the game logic
-            _minesweeperLogic.DecrementRewards();
-            // Update the rewards label to show the number of rewards remaining
-            lblRewards.Text = _minesweeperLogic.RewardsRemaining.ToString();
+            if (!_victory && !_death)
+            {
+                // Set the use reward variable to true
+                _useReward = true;
+                // Decrement the rewards remaining in the game logic
+                _minesweeperLogic.DecrementRewards();
+                // Update the rewards label to show the number of rewards remaining
+                lblRewards.Text = _minesweeperLogic.RewardsRemaining.ToString(); 
+            }
         }
+
+        /// <summary>
+        /// Method to switch the graphics to the default sprites
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void defaultToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             // Initialize the dictionary with resized images for each tile type
@@ -555,6 +570,11 @@ namespace MinesweeperGUIApp
             UpdateButtons();
         }
 
+        /// <summary>
+        /// Method to switch the graphics to the original sprites from the classic minesweeper game
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void classicToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             // Update the tile images to the original sprites
@@ -576,6 +596,153 @@ namespace MinesweeperGUIApp
             };
             // Update the buttons to reflect the change in images
             UpdateButtons();
+        }
+
+        /// <summary>
+        /// Event handler for Save Game menu item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveGameToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            // Don't allow saving if game is already over
+            if (_victory || _death)
+            {
+                MessageBox.Show("Cannot save a completed game!", "Save Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Create a SaveFileDialog to let the user choose where to save
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "Minesweeper Save Files (*.minesave)|*.minesave|JSON Files (*.json)|*.json|All Files (*.*)|*.*";
+                saveFileDialog.DefaultExt = "minesave";
+                saveFileDialog.Title = "Save Game";
+                saveFileDialog.InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+                saveFileDialog.FileName = $"MinesweeperSave_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Create a GameSave object with the current game state
+                        GameSave gameSave = new GameSave(
+                            _board,
+                            _elapsedSeconds,
+                            _gameDifficulty,
+                            _gameState,
+                            _victory,
+                            _death,
+                            _minesweeperLogic.RewardsRemaining
+                        );
+
+                        // Save the game using the MinesweeperDAO
+                        bool success = _minesweeperDAO.SaveGame(gameSave, saveFileDialog.FileName);
+
+                        if (success)
+                        {
+                            MessageBox.Show("Game saved successfully!", "Save Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Failed to save game.\n\nError: {ex.Message}", "Save Game Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Event handler for Load Game menu item
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LoadGameToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            // Create an OpenFileDialog to let the user choose which save to load
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Minesweeper Save Files (*.minesave)|*.minesave|JSON Files (*.json)|*.json|All Files (*.*)|*.*";
+                openFileDialog.DefaultExt = "minesave";
+                openFileDialog.Title = "Load Game";
+                openFileDialog.InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Ask user for confirmation
+                    DialogResult result = MessageBox.Show(
+                        "Loading a saved game will replace the current game. Continue?",
+                        "Load Game",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question
+                    );
+
+                    if (result == DialogResult.Yes)
+                    {
+                        try
+                        {
+                            // Load the game using the MinesweeperDAO
+                            GameSave gameSave = _minesweeperDAO.LoadGame(openFileDialog.FileName);
+
+                            if (gameSave != null)
+                            {
+                                // Stop the current timer
+                                gameTimer.Stop();
+
+                                // Restore the game state
+                                _board = gameSave.Board;
+                                _elapsedSeconds = gameSave.ElapsedSeconds;
+                                _gameDifficulty = gameSave.GameDifficulty;
+                                _gameState = gameSave.GameState;
+                                _victory = gameSave.Victory;
+                                _death = gameSave.Death;
+
+                                // Update the MinesweeperLogic with the loaded board
+                                _minesweeperLogic.GetBoard(_board);
+                                _minesweeperLogic.GetSize(_board.Size);
+
+                                // Clear the panel and recreate buttons
+                                pnlMinesweeperBoard.Controls.Clear();
+                                SetUpButtons();
+
+                                // Update all buttons to show current state
+                                UpdateButtons();
+
+                                // Update the labels
+                                TimeSpan time = TimeSpan.FromSeconds(_elapsedSeconds);
+                                lblStartTime.Text = time.ToString(@"hh\:mm\:ss");
+                                lblRewards.Text = gameSave.RewardsRemaining.ToString();
+
+                                // Show/hide reward button based on rewards remaining
+                                if (gameSave.RewardsRemaining > 0)
+                                {
+                                    btnUseReward.Visible = true;
+                                }
+                                else
+                                {
+                                    btnUseReward.Visible = false;
+                                }
+
+                                // Restart the timer if game is not over
+                                if (!_victory && !_death)
+                                {
+                                    gameTimer.Start();
+                                }
+
+                                MessageBox.Show("Game loaded successfully!", "Load Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Failed to load game. The save file may be corrupted.", "Load Game", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Failed to load game.\n\nError: {ex.Message}", "Load Game Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
         }
     }
 }
