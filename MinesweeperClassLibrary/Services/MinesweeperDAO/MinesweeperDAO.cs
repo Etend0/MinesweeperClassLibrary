@@ -223,7 +223,7 @@ namespace MinesweeperClassLibrary.Services.MinesweeperDAO
         /// <summary>
         /// Reads the player scores from the PlayerScores.txt file and populates the _playerScores list.
         /// </summary>
-        /// <returns>True if read is successful, false otherwise.</returns>
+        /// <returns>
         public bool ReadScoresFromFile()
         {
             // Define the file path
@@ -314,10 +314,10 @@ namespace MinesweeperClassLibrary.Services.MinesweeperDAO
         /// <summary>
         /// Save the current game progress (BoardModel and GameState) to a JSON file.
         /// </summary>
-        /// <param name="board">The board to save.</param>
-        /// <param name="gameState">The game state to save.</param>
-        /// <param name="filename">The filename for the save file (without path).</param>
-        /// <returns>True if save is successful, false otherwise.</returns>
+        /// <param name="board"></param>
+        /// <param name="gameState"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public bool SaveGameProgress(BoardModel board, GameState gameState, int rewards, string filename)
         {
             // Get the file path for the save file
