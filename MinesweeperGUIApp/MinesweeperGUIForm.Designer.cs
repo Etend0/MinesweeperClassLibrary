@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MinesweeperGUIForm));
             pnlMinesweeperBoard = new Panel();
             label1 = new Label();
             lblStartTime = new Label();
@@ -45,7 +46,15 @@
             graphicsToolStripMenuItem = new ToolStripMenuItem();
             defaultToolStripMenuItem = new ToolStripMenuItem();
             classicToolStripMenuItem = new ToolStripMenuItem();
+            musicToolStripMenuItem = new ToolStripMenuItem();
+            track1ToolStripMenuItem = new ToolStripMenuItem();
+            track2ToolStripMenuItem = new ToolStripMenuItem();
+            track3ToolStripMenuItem = new ToolStripMenuItem();
+            track4ToolStripMenuItem = new ToolStripMenuItem();
+            stopMusicToolStripMenuItem = new ToolStripMenuItem();
+            wmpPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             mnOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)wmpPlayer).BeginInit();
             SuspendLayout();
             // 
             // pnlMinesweeperBoard
@@ -60,7 +69,7 @@
             label1.AutoSize = true;
             label1.Location = new Point(780, 63);
             label1.Name = "label1";
-            label1.Size = new Size(61, 15);
+            label1.Size = new Size(60, 15);
             label1.TabIndex = 1;
             label1.Text = "Start Time";
             // 
@@ -69,7 +78,7 @@
             lblStartTime.AutoSize = true;
             lblStartTime.Location = new Point(780, 87);
             lblStartTime.Name = "lblStartTime";
-            lblStartTime.Size = new Size(65, 15);
+            lblStartTime.Size = new Size(64, 15);
             lblStartTime.TabIndex = 2;
             lblStartTime.Text = "GameTime";
             // 
@@ -141,7 +150,7 @@
             // 
             // mnOptions
             // 
-            mnOptions.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, graphicsToolStripMenuItem });
+            mnOptions.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, graphicsToolStripMenuItem, musicToolStripMenuItem });
             mnOptions.Location = new Point(0, 0);
             mnOptions.Name = "mnOptions";
             mnOptions.Size = new Size(942, 24);
@@ -177,22 +186,69 @@
             // defaultToolStripMenuItem
             // 
             defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
-            defaultToolStripMenuItem.Size = new Size(180, 22);
+            defaultToolStripMenuItem.Size = new Size(112, 22);
             defaultToolStripMenuItem.Text = "Default";
             defaultToolStripMenuItem.Click += defaultToolStripMenuItem_Click;
             // 
             // classicToolStripMenuItem
             // 
             classicToolStripMenuItem.Name = "classicToolStripMenuItem";
-            classicToolStripMenuItem.Size = new Size(180, 22);
+            classicToolStripMenuItem.Size = new Size(112, 22);
             classicToolStripMenuItem.Text = "Classic";
             classicToolStripMenuItem.Click += classicToolStripMenuItem_Click;
+            // 
+            // musicToolStripMenuItem
+            // 
+            musicToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { track1ToolStripMenuItem, track2ToolStripMenuItem, track3ToolStripMenuItem, track4ToolStripMenuItem, stopMusicToolStripMenuItem });
+            musicToolStripMenuItem.Name = "musicToolStripMenuItem";
+            musicToolStripMenuItem.Size = new Size(51, 20);
+            musicToolStripMenuItem.Text = "Music";
+            // 
+            // track1ToolStripMenuItem
+            // 
+            track1ToolStripMenuItem.Name = "track1ToolStripMenuItem";
+            track1ToolStripMenuItem.Size = new Size(180, 22);
+            track1ToolStripMenuItem.Text = "Track 1";
+            // 
+            // track2ToolStripMenuItem
+            // 
+            track2ToolStripMenuItem.Name = "track2ToolStripMenuItem";
+            track2ToolStripMenuItem.Size = new Size(180, 22);
+            track2ToolStripMenuItem.Text = "Track 2";
+            // 
+            // track3ToolStripMenuItem
+            // 
+            track3ToolStripMenuItem.Name = "track3ToolStripMenuItem";
+            track3ToolStripMenuItem.Size = new Size(180, 22);
+            track3ToolStripMenuItem.Text = "Track 3";
+            // 
+            // track4ToolStripMenuItem
+            // 
+            track4ToolStripMenuItem.Name = "track4ToolStripMenuItem";
+            track4ToolStripMenuItem.Size = new Size(180, 22);
+            track4ToolStripMenuItem.Text = "Track 4";
+            // 
+            // stopMusicToolStripMenuItem
+            // 
+            stopMusicToolStripMenuItem.Name = "stopMusicToolStripMenuItem";
+            stopMusicToolStripMenuItem.Size = new Size(180, 22);
+            stopMusicToolStripMenuItem.Text = "Stop Music";
+            // 
+            // wmpPlayer
+            // 
+            wmpPlayer.Enabled = true;
+            wmpPlayer.Location = new Point(780, 306);
+            wmpPlayer.Name = "wmpPlayer";
+            wmpPlayer.OcxState = (AxHost.State)resources.GetObject("wmpPlayer.OcxState");
+            wmpPlayer.Size = new Size(150, 58);
+            wmpPlayer.TabIndex = 11;
             // 
             // MinesweeperGUIForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(942, 789);
+            Controls.Add(wmpPlayer);
             Controls.Add(lblRewards);
             Controls.Add(btnUseReward);
             Controls.Add(label2);
@@ -209,6 +265,7 @@
             Text = "Minesweeper";
             mnOptions.ResumeLayout(false);
             mnOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)wmpPlayer).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -232,5 +289,12 @@
         private ToolStripMenuItem graphicsToolStripMenuItem;
         private ToolStripMenuItem defaultToolStripMenuItem;
         private ToolStripMenuItem classicToolStripMenuItem;
+        private ToolStripMenuItem musicToolStripMenuItem;
+        private ToolStripMenuItem track1ToolStripMenuItem;
+        private ToolStripMenuItem track2ToolStripMenuItem;
+        private ToolStripMenuItem track3ToolStripMenuItem;
+        private ToolStripMenuItem track4ToolStripMenuItem;
+        private ToolStripMenuItem stopMusicToolStripMenuItem;
+        private AxWMPLib.AxWindowsMediaPlayer wmpPlayer;
     }
 }

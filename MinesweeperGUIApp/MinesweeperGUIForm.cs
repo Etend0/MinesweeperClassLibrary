@@ -4,6 +4,7 @@ using StartNewGameGUI;
 using FrmGetUser;
 using FrmHighscores;
 using MinesweeperClassLibrary.Services.MinesweeperDAO;
+using System.Media;
 
 namespace MinesweeperGUIApp
 {
@@ -72,16 +73,19 @@ namespace MinesweeperGUIApp
         // Dictionary to store the original sprites for each tile type
         private Dictionary<string, Image> _originalSprites;
 
+        // Sound player for playing sound effects in the game
+        private System.Media.SoundPlayer soundEffectPlayer;
+
+        // String to track the current music track being played
+        private string currentTrack = "";
+
+
         /// <summary>
         /// MinesweeperGUIForm constructor
         /// </summary>
         public MinesweeperGUIForm()
         {
             InitializeComponent();
-
-            // Register event handlers for save/load menu items
-            saveGameToolStripMenuItem.Click += SaveGameToolStripMenuItem_Click;
-            loadGameToolStripMenuItem.Click += LoadGameToolStripMenuItem_Click;
 
             // Show the difficulty form
             _newGameForm.ShowDialog();
@@ -112,6 +116,17 @@ namespace MinesweeperGUIApp
             // Set death to false
             _death = false;
 
+            // Set the save and load options to the save and load methods
+            saveGameToolStripMenuItem.Click += SaveGameToolStripMenuItem_Click;
+            loadGameToolStripMenuItem.Click += LoadGameToolStripMenuItem_Click;
+
+            // Set the music controls to their respective methods
+            track1ToolStripMenuItem.Click += track1ToolStripMenuItem_Click;
+            track2ToolStripMenuItem.Click += track2ToolStripMenuItem_Click;
+            track3ToolStripMenuItem.Click += track3ToolStripMenuItem_Click;
+            track4ToolStripMenuItem.Click += track4ToolStripMenuItem_Click;
+            stopMusicToolStripMenuItem.Click += stopMusicToolStripMenuItem_Click;
+
             // Hide the button for using reward
             btnUseReward.Visible = false;
 
@@ -139,6 +154,108 @@ namespace MinesweeperGUIApp
 
             // Start the timer
             gameTimer.Start();
+
+            wmpPlayer.URL = @"MinesweeperTrack1.mp3";
+            currentTrack = wmpPlayer.URL;
+            wmpPlayer.settings.playCount = 9999;
+            wmpPlayer.settings.volume = 30;
+            wmpPlayer.Ctlcontrols.play();
+            wmpPlayer.Visible = false;
+        }
+
+        /// <summary>
+        /// Method to save the game progress to a file using the MinesweeperDAO
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveGameToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            if (!_victory && !_death)
+            {
+                // Use a SaveFileDialog to allow the user to choose where to save the file
+                using (var sfd = new SaveFileDialog())
+                {
+                    // Set the filter for the file types and the title of the dialog
+                    sfd.Filter = "Minesweeper Save (*.json)|*.json|All files (*.*)|*.*";
+                    // Set the title of the dialog
+                    sfd.Title = "Save Game";
+                    // Show the dialog and check if the user clicked OK
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        // Use _player or create a new GameState if null
+                        var player = _player ?? new GameState(0, "Player", 0, TimeSpan.FromSeconds(_elapsedSeconds));
+                        // Call the SaveGameProgress method in the DAO to save the game progress and show a message box with the result
+                        bool result = _minesweeperDAO.SaveGameProgress(_board, player, _minesweeperLogic.RewardsRemaining, sfd.FileName);
+                        // Show a message box with the result of the save operation
+                        MessageBox.Show(result ? "Game saved successfully." : "Failed to save game.");
+                    }
+                }
+            }
+            else
+            {
+                // If the user has already won or lost, show a message box that they can't save the game
+                MessageBox.Show("You can't save the game after it's over!");
+            }
+        }
+
+        /// <summary>
+        /// Method to load the game progress from a file using the MinesweeperDAO and update the board, player, rewards, timer, and UI
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LoadGameToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            // Use an OpenFileDialog to allow the user to choose a file to load
+            using (var ofd = new OpenFileDialog())
+            {
+                // Set the filter for the file types and the title of the dialog
+                ofd.Filter = "Minesweeper Save (*.json)|*.json|All files (*.*)|*.*";
+                // Set the title of the dialog
+                ofd.Title = "Load Game";
+                // Show the dialog and check if the user clicked OK
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    // Call the LoadGameProgress method in the DAO to load the game progress and update the board, player, rewards, timer, and UI
+                    if (_minesweeperDAO.LoadGameProgress(ofd.FileName, out var loadedBoard, out var loadedPlayer, out var loadedRewards))
+                    {
+                        // Set the board to the loaded board
+                        _board = loadedBoard;
+                        // Set the difficulty to the loaded board's difficulty
+                        _gameDifficulty = _board.DifficultyLevels;
+                        // Set the player to the loaded player
+                        _player = loadedPlayer;
+                        // Set the board model for the MinesweeperLogic to the loaded board
+                        _minesweeperLogic.GetBoard(_board);
+                        // Get the size of the board for the game logic
+                        _minesweeperLogic.GetSize(_board.Size);
+                        // Set the rewards remaining in the game logic to the loaded rewards
+                        _minesweeperLogic.RewardsRemaining = loadedRewards;
+                        // Reset timer and UI
+                        _elapsedSeconds = (int)(_player?.Time.TotalSeconds ?? 0);
+                        // Set the start time label to the loaded time
+                        lblStartTime.Text = TimeSpan.FromSeconds(_elapsedSeconds).ToString(@"hh\:mm\:ss");
+                        // Set the score label to the loaded score
+                        lblRewards.Text = loadedRewards.ToString();
+                        // Remove old buttons from the panel
+                        pnlMinesweeperBoard.Controls.Clear();
+                        // Call the setup buttons method
+                        SetUpButtons();
+                        // Call the update buttons method
+                        UpdateButtons();
+                        // Set the victory to false
+                        _victory = false;
+                        // Set the death to false
+                        _death = false;
+                        // Tell the user the game was successfully loaded
+                        MessageBox.Show("Game loaded successfully.");
+                    }
+                    else
+                    {
+                        // Tell the user the game failed to load
+                        MessageBox.Show("Failed to load game.");
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -234,8 +351,30 @@ namespace MinesweeperGUIApp
                 // If we clicked left mouse button, we want to reveal the cell
                 if (e.Button == MouseButtons.Left)
                 {
+                    // Check if we aren't using a reward
                     if (!_useReward)
                     {
+                        // Check if the cell has been visited
+                        bool cellVisited = _board.Cells[col, row].IsVisited();
+
+                        // If the cell hasn't been visited, we want to play the click sound effect for revealing a cell or finding a reward
+                        if (!cellVisited)
+                        {
+                            // Check if the cell has a special reward to determine which sound effect to play
+                        bool isReward = _board.Cells[col, row] is RewardCellModel;
+                            // If it is a reward, play the reward sound effect, otherwise play the click sound effect for revealing a cell
+                            if (!isReward)
+                        {
+                            soundEffectPlayer = new System.Media.SoundPlayer(Properties.Resources.MinesweeperClick);
+                            soundEffectPlayer.Play();
+                        }
+                        else
+                        {
+                            soundEffectPlayer = new System.Media.SoundPlayer(Properties.Resources.MinesweeperReward);
+                            soundEffectPlayer.Play();
+                        }
+                        }
+
                         // Update the cell in the board model to be visited
                         _minesweeperLogic.UpdateCell(row, col, 1);
                         // Set the selected cell to the cell that was just updated
@@ -246,18 +385,23 @@ namespace MinesweeperGUIApp
                         // If the user is using a reward, we want to reveal the cell without marking it as visited
                         _selectedCell = _board.Cells[col, row];
                         // Check if the selected cell is a bomb
-                        if (_selectedCell.isBomb)
+                        if (_selectedCell is BombCellModel)
                         {
-                            // If it is a bomb, we want to update the cell to be revealed but not visited
                             MessageBox.Show("This is a bomb!");
                         }
                         else
                         {
-                            // If it is not a bomb, we want to update the cell to be revealed but not visited
                             MessageBox.Show("This is not a bomb.");
                         }
                         // Set use reward back to false after using it
                         _useReward = false;
+                    }
+
+                    // If the selected cell has a special reward, play the reward sound effect
+                    if (_selectedCell is RewardCellModel && !_selectedCell.isVisited)
+                    {
+                        soundEffectPlayer = new System.Media.SoundPlayer(Properties.Resources.MinesweeperReward);
+                        soundEffectPlayer.Play();
                     }
                 }
                 // If we clicked the right mouse button, we want to flag or unflag the cell
@@ -266,16 +410,27 @@ namespace MinesweeperGUIApp
                     // Get the selected cell
                     _selectedCell = _board.Cells[col, row];
 
-                    // Check if it is flagged
-                    if (_selectedCell.isFlagged)
+                    // Bool to check if the cell has been visited
+                    bool CheckVisited = _selectedCell.IsVisited();
+
+                    // If the cell hasn't been visited, we want to allow the user to flag or unflag the cell by right clicking
+                    if (!CheckVisited)
                     {
-                        // If it is flagged, we want to unflag it
-                        _minesweeperLogic.UpdateCell(row, col, 0);
-                    }
-                    else
-                    {
-                        // If it is not flagged, we want to flag it
-                        _minesweeperLogic.UpdateCell(row, col, 2);
+                        // Check if it is flagged
+                        if (_selectedCell.isFlagged)
+                        {
+                            // If it is flagged, we want to unflag it
+                            _minesweeperLogic.UpdateCell(row, col, 0);
+                        }
+                        else
+                        {
+                            // If it is not flagged, we want to flag it
+                            _minesweeperLogic.UpdateCell(row, col, 2);
+                        }
+
+                        // Play the sound effect for placing a flag when the user right clicks to place a flag
+                        soundEffectPlayer = new System.Media.SoundPlayer(Properties.Resources.MinesweeperPlaceFlag);
+                        soundEffectPlayer.Play();
                     }
                 }
 
@@ -321,44 +476,61 @@ namespace MinesweeperGUIApp
                 }
             }
 
-            // Determine the game state after the user's move
-            _gameState = _board.DetermineGameState(_gameState);
-
-            // Check the game state for whether we have won, lost, or are still playing
-            switch (_gameState)
+            // Check that we aren't dead and haven't won
+            if (!_victory && !_death)
             {
-                // If we are still playing, we don't need to do anything
-                case "StillPlaying":
-                    break;
+                // Determine the game state after the user's move
+                _gameState = _board.DetermineGameState(_gameState);
 
-                // If we have won, set victory to true
-                case "Won":
-                    // Set victory to true
-                    _victory = true;
-                    // Stop the timer
-                    gameTimer.Stop();
-                    // Set the score to 0 to initialize
-                    int score = 0;
-                    // Show a message box with the score by using the CalculateScore method
-                    //System.Windows.Forms.MessageBox.Show("Congratulations! You won! Your score is " + CalculateScore(score));
-                    // Set the score label to the calculated score
-                    _getNameForm.GetInt(CalculateScore(score));
-                    // Show the get name form to enter the user's name and display the score
-                    _getNameForm.ShowDialog();
-                    GameState gameState = new GameState(0, _getNameForm.returnString(_getNameForm.Name), CalculateScore(score), TimeSpan.FromSeconds(_elapsedSeconds));
-                    _minesweeperDAO.AddPlayerScore(gameState);
-                    _minesweeperDAO.WriteScoreToFile();
-                    break;
+                // Check the game state for whether we have won, lost, or are still playing
+                switch (_gameState)
+                {
+                    // If we are still playing, we don't need to do anything
+                    case "StillPlaying":
+                        break;
 
-                // If we have lost, set death to true
-                case "Lost":
-                    // Set death to true
-                    _death = true;
-                    // Stop the timer
-                    gameTimer.Stop();
-                    // Output the losing message
-                    System.Windows.Forms.MessageBox.Show("* KABOOM! * Sorry, you lost!");
-                    break;
+                    // If we have won, set victory to true
+                    case "Won":
+                        // Stop the music
+                        wmpPlayer.Ctlcontrols.stop();
+                        // Set the music player to play the victory music once
+                        wmpPlayer.settings.playCount = 1;
+                        // Grab the current URL
+                        currentTrack = wmpPlayer.URL;
+                        // Play the victory sound effect
+                        wmpPlayer.URL = @"MinesweeperClear.mp3";
+                        // Play the music
+                        wmpPlayer.Ctlcontrols.play();
+                        // Set victory to true
+                        _victory = true;
+                        // Stop the timer
+                        gameTimer.Stop();
+                        // Set the score to 0 to initialize
+                        int score = 0;
+                        // Set the score label to the calculated score
+                        _getNameForm.GetInt(CalculateScore(score));
+                        // Show the get name form to enter the user's name and display the score
+                        _getNameForm.ShowDialog();
+                        GameState gameState = new GameState(0, _getNameForm.returnString(_getNameForm.Name), CalculateScore(score), TimeSpan.FromSeconds(_elapsedSeconds));
+                        _minesweeperDAO.AddPlayerScore(gameState);
+                        _minesweeperDAO.WriteScoreToFile();
+                        break;
+
+                    // If we have lost, set death to true
+                    case "Lost":
+                        // Stop the music
+                        wmpPlayer.Ctlcontrols.stop();
+                        // Play the bomb sound effect
+                        soundEffectPlayer = new System.Media.SoundPlayer(Properties.Resources.MinesweeperBomb);
+                        soundEffectPlayer.Play();
+                        // Set death to true
+                        _death = true;
+                        // Stop the timer
+                        gameTimer.Stop();
+                        // Output the losing message
+                        System.Windows.Forms.MessageBox.Show("* KABOOM! * Sorry, you lost!");
+                        break;
+                }
             }
         } // End of UpdateButtons method
 
@@ -457,7 +629,6 @@ namespace MinesweeperGUIApp
         {
             // Stop the timer
             gameTimer.Stop();
-
             // Re-initialize the board and the game logic
             _board = new BoardModel(_gameDifficulty);
             // Set the board model for the MinesweeperLogic
@@ -498,6 +669,15 @@ namespace MinesweeperGUIApp
 
             // Start the timer
             gameTimer.Start();
+
+            // Reset our loop
+            wmpPlayer.settings.playCount = 9999;
+
+            // Grab the previously chosen song
+            wmpPlayer.URL = currentTrack;
+
+            // Play the music
+            wmpPlayer.Ctlcontrols.play();
         }
 
         /// <summary>
@@ -599,150 +779,86 @@ namespace MinesweeperGUIApp
         }
 
         /// <summary>
-        /// Event handler for Save Game menu item
+        /// Method to play the first track of the minesweeper music when the user clicks the menu item for track 1
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SaveGameToolStripMenuItem_Click(object? sender, EventArgs e)
+        private void track1ToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            // Don't allow saving if game is already over
-            if (_victory || _death)
-            {
-                MessageBox.Show("Cannot save a completed game!", "Save Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+            // Stop the music if it is already playing before starting a new track
+            wmpPlayer.Ctlcontrols.stop();
 
-            // Create a SaveFileDialog to let the user choose where to save
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.Filter = "Minesweeper Save Files (*.minesave)|*.minesave|JSON Files (*.json)|*.json|All Files (*.*)|*.*";
-                saveFileDialog.DefaultExt = "minesave";
-                saveFileDialog.Title = "Save Game";
-                saveFileDialog.InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
-                saveFileDialog.FileName = $"MinesweeperSave_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        // Create a GameSave object with the current game state
-                        GameSave gameSave = new GameSave(
-                            _board,
-                            _elapsedSeconds,
-                            _gameDifficulty,
-                            _gameState,
-                            _victory,
-                            _death,
-                            _minesweeperLogic.RewardsRemaining
-                        );
-
-                        // Save the game using the MinesweeperDAO
-                        bool success = _minesweeperDAO.SaveGame(gameSave, saveFileDialog.FileName);
-
-                        if (success)
-                        {
-                            MessageBox.Show("Game saved successfully!", "Save Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Failed to save game.\n\nError: {ex.Message}", "Save Game Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
+            // Set the player to play the first track
+            wmpPlayer.URL = @"MinesweeperTrack1.mp3";
+            // Set the current track to the first track
+            currentTrack = wmpPlayer.URL;
+            // Play the music in a loop
+            wmpPlayer.Ctlcontrols.play();
         }
 
         /// <summary>
-        /// Event handler for Load Game menu item
+        /// Method to play the second track of the minesweeper music when the user clicks the menu item for track 1
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LoadGameToolStripMenuItem_Click(object? sender, EventArgs e)
+        private void track2ToolStripMenuItem_Click(object? sender, EventArgs e)
         {
-            // Create an OpenFileDialog to let the user choose which save to load
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.Filter = "Minesweeper Save Files (*.minesave)|*.minesave|JSON Files (*.json)|*.json|All Files (*.*)|*.*";
-                openFileDialog.DefaultExt = "minesave";
-                openFileDialog.Title = "Load Game";
-                openFileDialog.InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+            // Stop the music if it is already playing before starting a new track
+            wmpPlayer.Ctlcontrols.stop();
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    // Ask user for confirmation
-                    DialogResult result = MessageBox.Show(
-                        "Loading a saved game will replace the current game. Continue?",
-                        "Load Game",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question
-                    );
+            // Set the player to play the second track
+            wmpPlayer.URL = @"MinesweeperTrack2.mp3";
+            // Set the current track to the second track
+            currentTrack = wmpPlayer.URL;
+            // Play the music in a loop
+            wmpPlayer.Ctlcontrols.play();
+        }
 
-                    if (result == DialogResult.Yes)
-                    {
-                        try
-                        {
-                            // Load the game using the MinesweeperDAO
-                            GameSave gameSave = _minesweeperDAO.LoadGame(openFileDialog.FileName);
+        /// <summary>
+        /// Method to play the third track of the minesweeper music when the user clicks the menu item for track 1
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void track3ToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            // Stop the music if it is already playing before starting a new track
+            wmpPlayer.Ctlcontrols.stop();
 
-                            if (gameSave != null)
-                            {
-                                // Stop the current timer
-                                gameTimer.Stop();
+            // Set the player to play the third track
+            wmpPlayer.URL = @"MinesweeperTrack3.mp3";
+            // Set the current track to the third track
+            currentTrack = wmpPlayer.URL;
+            // Play the music in a loop
+            wmpPlayer.Ctlcontrols.play();
+        }
 
-                                // Restore the game state
-                                _board = gameSave.Board;
-                                _elapsedSeconds = gameSave.ElapsedSeconds;
-                                _gameDifficulty = gameSave.GameDifficulty;
-                                _gameState = gameSave.GameState;
-                                _victory = gameSave.Victory;
-                                _death = gameSave.Death;
+        /// <summary>
+        /// Method to play the first track of the minesweeper music when the user clicks the menu item for track 1
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void track4ToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            // Stop the music if it is already playing before starting a new track
+            wmpPlayer.Ctlcontrols.stop();
 
-                                // Update the MinesweeperLogic with the loaded board
-                                _minesweeperLogic.GetBoard(_board);
-                                _minesweeperLogic.GetSize(_board.Size);
+            // Set the player to play the fourth track
+            wmpPlayer.URL = @"MinesweeperTrack4.mp3";
+            // Set the current track to the fourth track
+            currentTrack = wmpPlayer.URL;
+            // Play the music in a loop
+            wmpPlayer.Ctlcontrols.play();
+        }
 
-                                // Clear the panel and recreate buttons
-                                pnlMinesweeperBoard.Controls.Clear();
-                                SetUpButtons();
-
-                                // Update all buttons to show current state
-                                UpdateButtons();
-
-                                // Update the labels
-                                TimeSpan time = TimeSpan.FromSeconds(_elapsedSeconds);
-                                lblStartTime.Text = time.ToString(@"hh\:mm\:ss");
-                                lblRewards.Text = gameSave.RewardsRemaining.ToString();
-
-                                // Show/hide reward button based on rewards remaining
-                                if (gameSave.RewardsRemaining > 0)
-                                {
-                                    btnUseReward.Visible = true;
-                                }
-                                else
-                                {
-                                    btnUseReward.Visible = false;
-                                }
-
-                                // Restart the timer if game is not over
-                                if (!_victory && !_death)
-                                {
-                                    gameTimer.Start();
-                                }
-
-                                MessageBox.Show("Game loaded successfully!", "Load Game", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                MessageBox.Show("Failed to load game. The save file may be corrupted.", "Load Game", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Failed to load game.\n\nError: {ex.Message}", "Load Game Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-            }
+        /// <summary>
+        /// Method to stop playing all music when the user clicks the menu item to stop the music
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void stopMusicToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            // Stop the music
+            wmpPlayer.Ctlcontrols.stop();
         }
     }
 }

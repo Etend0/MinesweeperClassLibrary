@@ -21,7 +21,7 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
     public interface IMinesweeperLogic
     {
         // Properties
-        int RewardsRemaining { get; }
+        int RewardsRemaining { get; set; }
         int DifficultyLevels { get; }
         int Size { get; }
         CellModel[,] Cells { get; }

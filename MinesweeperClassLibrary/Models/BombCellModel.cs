@@ -14,18 +14,20 @@ using System.Threading.Tasks;
 
 namespace MinesweeperClassLibrary.Models
 {
-    /// <summary>
-    /// A cell that contains a bomb, inherits from CellModel
-    /// </summary>
     public class BombCellModel : CellModel
     {
         /// <summary>
-        /// Constructor for the bomb cell
+        /// Parameterless constructor for deserialization
+        /// </summary>
+        public BombCellModel() : base(0, 0, " ", false, false, 0) { }
+
+        /// <summary>
+        /// Parameterized constructor for the bomb cell
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
         public BombCellModel(int row, int column)
-            : base(row, column, " ", false, true, false, 0, false)
+            : base(row, column, " ", false, false, 0)
         {
         }
 

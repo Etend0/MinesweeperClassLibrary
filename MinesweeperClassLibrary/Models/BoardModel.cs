@@ -72,14 +72,11 @@ namespace MinesweeperClassLibrary.Models
             // Go through each column
             for (int i = 0; i < Size; i++)
             {
-                // Go through each row
                 for (int j = 0; j < Size; j++)
                 {
-                    // If the cell is null, create a new cell model with default values
                     if (Cells[i, j] == null)
                     {
-                        // Create the default cell
-                        Cells[i, j] = new CellModel(i, j, " ", false, false, false, 0, false);
+                        Cells[i, j] = new CellModel(i, j, " ", false, false, 0);
                     }
                 }
             }
@@ -104,31 +101,22 @@ namespace MinesweeperClassLibrary.Models
             // Check if a bomb has been detonated, if not, loop through the grid to check for unvisited cells
             if (!bombDetonated)
             {
-                // Loop through each cell in the grid
                 for (int y = 0; y < Size; y++)
                 {
-                    // Loop through each cell in the current row
                     for (int x = 0; x < Size; x++)
                     {
-                        // Get the current cell
                         CellModel currentCell = Cells[y, x];
-
-                        // If the current cell is not a bomb, check its neighbors for bombs and increment the count for each bomb found
-                        if (currentCell.isBomb != true)
+                        if (!(currentCell is BombCellModel))
                         {
-                            // If the current cell has not been visited, increment the cell count
-                            if (currentCell.isVisited != true)
+                            if (!currentCell.isVisited)
                             {
-                                // Increment the cell count
                                 cellCount++;
                             }
                         }
                         else
                         {
-                            // If the current cell is a bomb and has been visited, set the bomb detonated variable to true
-                            if (currentCell.isVisited == true)
+                            if (currentCell.isVisited)
                             {
-                                // Set the bomb detonated variable to true
                                 bombDetonated = true;
                             }
                         }

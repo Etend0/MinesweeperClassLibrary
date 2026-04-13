@@ -31,6 +31,7 @@ namespace FrmHighscores
             // Add event handler for DataGridView selection changed
             dtgdHighscores.SelectionChanged += DtgdHighscores_SelectionChanged;
 
+            // Initialize the player scores list
             lblPlayerName.Text = string.Empty;
             lblAverageTime.Text = "00:00:00";
             lblAverageScore.Text = "0";
@@ -54,38 +55,19 @@ namespace FrmHighscores
         /// <param name="e"></param>
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Clear the DataGridView before saving
-            dtgdHighscores.DataSource = null;
-
-            // Clear DAO
+            // Save scores to JSON file
+            string dirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+            // Ensure the directory exists
+            string filePath = Path.Combine(dirPath, "PlayerScores.json");
+            // Clear the existing scores in the file before saving the new scores
             _minesweeperDAO.ClearScores();
-
-            // Iterate through the list of scores from the form and add them to the DAO
-            for (int i = 0; i < _playerScores.Count; i++)
+            // Add each score from the _playerScores list to the file using the MinesweeperDAO
+            foreach (var score in _playerScores)
             {
-                // Get the score details from the current GameState object
-                GameState score = _playerScores[i];
-
-                // Get the Id
-                int id = score.getId();
-                // Get the Name
-                string name = score.getName();
-                // Get the Score
-                int scoreValue = score.getScore();
-                // Get the Date
-                DateTime time = score.getDate();
-
-                // Create a new GameState object with the retrieved details
-                GameState newScore = new GameState(id, name, scoreValue, time.TimeOfDay);
-
-                // Add the new GameState object to the DAO
+                // Add the score to the file using the MinesweeperDAO
                 _minesweeperDAO.AddPlayerScore(score);
             }
-
-            // Write scores to file
-            _minesweeperDAO.WriteScoreToFile();
-
-            // Now get the updated list and display it
+            // After saving the scores, reload them to ensure the DataGridView is updated with any changes
             SetScores(_playerScores);
         }
 
@@ -108,13 +90,9 @@ namespace FrmHighscores
         /// </summary>
         public void LoadScores()
         {
-            // Read scores from file into the DAO's list
             _minesweeperDAO.ReadScoresFromFile();
-            // Get the list of scores from the DAO
             List<GameState> dummyList = _minesweeperDAO.GetScoresList();
-            // Assign the list to the class level variable
             _playerScores = dummyList.ToList();
-            // Get the updated list and display it
             SetScores(_playerScores);
         }
 

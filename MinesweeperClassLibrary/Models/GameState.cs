@@ -8,11 +8,13 @@ namespace MinesweeperClassLibrary.Models
 {
     public class GameState
     {
+        // Parameterless constructor for JSON serialization/deserialization
+        public GameState() { }
         public int Id { get; protected set; }
         public String Name { get; protected set; }
-        public int Score { get; protected set; }
+        public int Score { get; set; }
         public DateTime Date { get; protected set; }
-        public TimeSpan Time { get; protected set; }
+        public TimeSpan Time { get; set; }
 
         public GameState(int id, String name, int score, TimeSpan Time)
         {

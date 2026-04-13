@@ -21,10 +21,8 @@ namespace MinesweeperClassLibrary.Models
         public int Column { get; set; }
         public String Type { get; set; }
         public bool isVisited { get; set; }
-        public bool isBomb { get; set; }
         public bool isFlagged { get; set; }
         public int NumberOfBombNeighbors { get; set; }
-        public bool HasSpecialReward { get; set; }
 
         /// <summary>
         /// Default constructor for JSON serialization
@@ -35,25 +33,21 @@ namespace MinesweeperClassLibrary.Models
             Column = 0;
             Type = " ";
             isVisited = false;
-            isBomb = false;
             isFlagged = false;
             NumberOfBombNeighbors = 0;
-            HasSpecialReward = false;
         }
 
         /// <summary>
         /// Parameterized constructor for the cell model
         /// </summary>
-        public CellModel(int row, int column, String type, bool isVisited, bool isBomb, bool isFlagged, int numberOfBombNeighbors, bool hasSpecialReward)
+        public CellModel(int row, int column, String type, bool isVisited, bool isFlagged, int numberOfBombNeighbors)
         {
             Row = row;
             Column = column;
             Type = type;
             this.isVisited = isVisited;
-            this.isBomb = isBomb;
             this.isFlagged = isFlagged;
             NumberOfBombNeighbors = numberOfBombNeighbors;
-            HasSpecialReward = hasSpecialReward;
         }
 
         /// <summary>
@@ -64,6 +58,13 @@ namespace MinesweeperClassLibrary.Models
         {
             // Set the isVisited property to the value of visited
             isVisited = visited;
+        }
+
+        // Returns if the cell has been visited or not
+        public bool IsVisited()
+        {
+            // Return the value of the isVisited property
+            return isVisited;
         }
 
         // Sets the flagged bool of the cell
@@ -80,20 +81,13 @@ namespace MinesweeperClassLibrary.Models
             NumberOfBombNeighbors = numberOfBombNeighbors;
         }
 
-        // Sets the has special reward bool of the cell
-        public void SetHasSpecialReward(bool hasSpecialReward)
-        {
-            //  Set the HasSpecialReward property to the value of hasSpecialReward
-            HasSpecialReward = hasSpecialReward;
-        }
-
         /// <summary>
         /// Print cell to console
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{Row} {Column} {Type} {isVisited} {isBomb} {isFlagged} {NumberOfBombNeighbors} {HasSpecialReward}";
+            return $"{Row} {Column} {Type} {isVisited} {isFlagged} {NumberOfBombNeighbors}";
         }
 
         /// <summary>
@@ -103,28 +97,15 @@ namespace MinesweeperClassLibrary.Models
         {
             if (isVisited)
             {
-                // If the type is B, we know it's a bomb
-                if (isBomb)
+                // If NumberOfBombNeighbors is 0, we have no bombs around and should print an empty dot
+                if (NumberOfBombNeighbors == 0)
                 {
-                    Type = "B ";
-                }
-                else if (HasSpecialReward)
-                {
-                    // If the cell is flagged, we should print an F
-                    Type = "R ";
+                    Type = ". ";
                 }
                 else
                 {
-                    // If NumberOfBombNeighbors is 0, we have no bombs around and should print an empty dot
-                    if (NumberOfBombNeighbors == 0)
-                    {
-                        Type = ". ";
-                    }
-                    else
-                    {
-                        // If NumberOfBombNeighors is not 0, print the number of bombs surrounding
-                        Type = NumberOfBombNeighbors + " ";
-                    }
+                    // If NumberOfBombNeighors is not 0, print the number of bombs surrounding
+                    Type = NumberOfBombNeighbors + " ";
                 }
             }
             else
@@ -140,8 +121,6 @@ namespace MinesweeperClassLibrary.Models
                     Type = "F ";
                 }
             }
-
-            // Return the type of cell
             return Type;
         }
 
@@ -150,31 +129,16 @@ namespace MinesweeperClassLibrary.Models
         /// </summary>
         public virtual String DrawMeCheat()
         {
-            // If the type is B, we know it's a bomb
-            if (isBomb)
+            // If NumberOfBombNeighbors is 0, we have no bombs around and should print an empty dot
+            if (NumberOfBombNeighbors == 0)
             {
-                Type = "B ";
-            }
-            else if (HasSpecialReward)
-            {
-                // If the cell is flagged, we should print an F
-                Type = "R ";
+                Type = ". ";
             }
             else
             {
-                // If NumberOfBombNeighbors is 0, we have no bombs around and should print an empty dot
-                if (NumberOfBombNeighbors == 0)
-                {
-                    Type = ". ";
-                }
-                else
-                {
-                    // If NumberOfBombNeighors is not 0, print the number of bombs surrounding
-                    Type = NumberOfBombNeighbors + " ";
-                }
+                // If NumberOfBombNeighors is not 0, print the number of bombs surrounding
+                Type = NumberOfBombNeighbors + " ";
             }
-
-            // Return the type of cell
             return Type;
         }
     }

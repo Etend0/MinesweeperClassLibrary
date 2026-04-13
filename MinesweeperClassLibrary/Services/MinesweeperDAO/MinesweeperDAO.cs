@@ -11,120 +11,111 @@ using System.IO;
 namespace MinesweeperClassLibrary.Services.MinesweeperDAO
 {
     /// <summary>
-    /// Custom JSON converter for 2D CellModel arrays
+    /// An internal class that provides custom JSON serialization and deserialization for a 2D array of CellModel objects, since System.Text.Json does not natively support multi-dimensional arrays
     /// </summary>
-    public class CellModelArrayConverter : JsonConverter<CellModel[,]>
+    public class CellModel2DArrayConverter : JsonConverter<CellModel[,]>
     {
         /// <summary>
-        /// Method to read a JSON array and convert it to a 2D CellModel array. The JSON is expected to be an array of arrays, where each inner array represents a row of the 2D array.
+        /// An override of the Read method that deserializes a JSON array of arrays (jagged array) into a 2D array of CellModel objects
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="typeToConvert"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        /// <exception cref="JsonException"></exception>
         public override CellModel[,] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            // Read the outer array
-            if (reader.TokenType != JsonTokenType.StartArray)
-                throw new JsonException();
-
-            // Set up a list to hold the rows of the 2D array as we read them from the JSON
-            var rows = new List<List<CellModel>>();
-
-            // Read each row from the JSON and convert it to a List<CellModel>, then add it to the rows list
-            while (reader.Read())
-            {
-                // If we reach the end of the outer array, break out of the loop
-                if (reader.TokenType == JsonTokenType.EndArray)
-                    break;
-
-                // If the token is the start of an inner array, read it as a row of CellModel objects
-                if (reader.TokenType == JsonTokenType.StartArray)
-                {
-                    // Set up a list to hold the CellModel objects for this row
-                    var row = new List<CellModel>();
-                    // Read each CellModel object from the inner array and add it to the row list
-                    while (reader.Read())
-                    {
-                        // If we reach the end of the inner array, break out of the loop
-                        if (reader.TokenType == JsonTokenType.EndArray)
-                            break;
-
-                        // Deserialize the current JSON object to a CellModel and add it to the row list
-                        var cell = JsonSerializer.Deserialize<CellModel>(ref reader, options);
-                        // Add the deserialized CellModel to the current row
-                        row.Add(cell);
-                    }
-                    rows.Add(row);
-                }
-            }
-
-            // Check if we have read any rows, if not return null
-            if (rows.Count == 0)
-                return null;
-
-            // Convert the list of rows to a 2D array of CellModel
-            int rowCount = rows.Count;
-            // If all rows have the same number of columns, get the column count from the first row
-            int colCount = rows[0].Count;
-            // If not all rows have the same number of columns, throw an exception
-            var result = new CellModel[rowCount, colCount];
-
-            // Iterate through the rows and columns and copy the CellModel objects from the list to the 2D array
-            for (int i = 0; i < rowCount; i++)
-            {
-                // Check if the current row has the same number of columns as the first row, if not throw an exception
-                for (int j = 0; j < colCount; j++)
-                {
-                    // Copy the CellModel object from the list to the 2D array
-                    result[i, j] = rows[i][j];
-                }
-            }
-
+            // Deserialize the JSON into a jagged array (array of arrays) first
+            var jagged = JsonSerializer.Deserialize<CellModel[][]>(ref reader, options);
+            // Convert the jagged array into a 2D array
+            int rows = jagged.Length;
+            // Handle the case where the jagged array might be empty to avoid IndexOutOfRangeException
+            int cols = jagged[0].Length;
+            // Create a new 2D array and populate it with the values from the jagged array
+            var result = new CellModel[rows, cols];
+            // Iterate through the jagged array and copy the values into the 2D array
+            for (int i = 0; i < rows; i++)
+                // Handle the case where rows might have different lengths
+                for (int j = 0; j < cols; j++)
+                    // Ensure we don't go out of bounds if the jagged array has irregular row lengths
+                    result[i, j] = jagged[i][j];
+            // Return the populated 2D array
             return result;
         }
 
         /// <summary>
-        /// Method to write a 2D CellModel array to JSON. The 2D array will be serialized as an array of arrays, where each inner array represents a row of the 2D array.
+        /// An override of the Write method that serializes a 2D array of CellModel objects into a JSON array of arrays format
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="value"></param>
         /// <param name="options"></param>
         public override void Write(Utf8JsonWriter writer, CellModel[,] value, JsonSerializerOptions options)
         {
-            // If the value is null, write a JSON null value and return
-            if (value == null)
-            {
-                // Write a JSON null value to indicate that the 2D array is null
-                writer.WriteNullValue();
-                return;
-            }
-
-            // Start writing the outer array to represent the 2D array
-            writer.WriteStartArray();
-
-            // Get the number of rows and columns in the 2D array
+            // Convert the 2D array into a jagged array first, since System.Text.Json can serialize jagged arrays natively
             int rows = value.GetLength(0);
-            // Assuming all rows have the same number of columns, get the column count from the first row
+            // Handle the case where the 2D array might be empty to avoid IndexOutOfRangeException
             int cols = value.GetLength(1);
-
-            // Iterate through the rows and columns of the 2D array and write each CellModel object to the JSON as part of an inner array representing the row
+            // Create a jagged array and populate it with the values from the 2D array
+            var jagged = new CellModel[rows][];
+            // Iterate through the 2D array and copy the values into the jagged array
             for (int i = 0; i < rows; i++)
             {
-                // Start writing an inner array to represent the current row of the 2D array
-                writer.WriteStartArray();
-                // Iterate through the columns of the current row and write each CellModel object to the JSON
+                // Handle the case where rows might have different lengths by initializing each row of the jagged array separately
+                jagged[i] = new CellModel[cols];
+                // Iterate through the columns and copy the values from the 2D array to the jagged array
                 for (int j = 0; j < cols; j++)
-                {
-                    // Serialize the current CellModel object to JSON and write it to the inner array
-                    JsonSerializer.Serialize(writer, value[i, j], options);
-                }
-                // After writing all the CellModel objects for the current row, end the inner array
-                writer.WriteEndArray();
+                    // Make sure we don't go out of bounds if the 2D array has irregular row lengths
+                    jagged[i][j] = value[i, j];
             }
-            // After writing all the rows, end the outer array
-            writer.WriteEndArray();
+            // Serialize the jagged array to JSON using the provided options
+            JsonSerializer.Serialize(writer, jagged, options);
+        }
+    }
+
+    /// <summary>
+    /// An internal class that provides custom JSON serialization and deserialization for TimeSpan objects, since System.Text.Json does not natively support TimeSpan
+    /// </summary>
+    public class TimeSpanConverter : JsonConverter<TimeSpan>
+    {
+        /// <summary>
+        /// An override of the Read method that deserializes a JSON string or number into a TimeSpan object
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="typeToConvert"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        /// <exception cref="JsonException"></exception>
+        public override TimeSpan Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            // Try to parse as string
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                // Get the string value from the JSON
+                var str = reader.GetString();
+                // Try parsing as TimeSpan string format (c format)
+                if (TimeSpan.TryParse(str, out var ts))
+                    return ts;
+                // Try parsing as ISO 8601 duration
+                if (System.Xml.XmlConvert.ToTimeSpan(str) is TimeSpan xmlTs)
+                    return xmlTs;
+            }
+            // Try to parse as number (ticks)
+            if (reader.TokenType == JsonTokenType.Number && reader.TryGetInt64(out long ticks))
+                // If it's a number, treat it as ticks and convert to TimeSpan
+                return TimeSpan.FromTicks(ticks);
+            // If we can't parse it as either a string or a number, throw an exception indicating that the conversion failed
+            throw new JsonException($"Unable to convert {reader.TokenType} to TimeSpan");
+        }
+
+        /// <summary>
+        /// An override of the Write method that serializes a TimeSpan object into a JSON string in the standard TimeSpan format (c format)
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="value"></param>
+        /// <param name="options"></param>
+        public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options)
+        {
+            // Write as string in c format
+            writer.WriteStringValue(value.ToString());
         }
     }
 
@@ -223,7 +214,7 @@ namespace MinesweeperClassLibrary.Services.MinesweeperDAO
                 return true;
             }
             catch
-            {   
+            {
                 // If an exception occurs during file writing, return false
                 return false;
             }
@@ -247,68 +238,67 @@ namespace MinesweeperClassLibrary.Services.MinesweeperDAO
             // Enter a try-catch block to handle potential exceptions during file reading
             try
             {
-                // Read all lines from the file
+                // Read all lines from the file into an array of strings
                 string[] lines = File.ReadAllLines(filePath);
-                // Int to hold the current GameState objects id
+                // Set the id to null
                 int? id = null;
-                // String to hold the current GameState objects name
+                // Set the name to null
                 string name = null;
-                // Int to hold the current GameState objects score
+                // Set the score to null
                 int? score = null;
-                // DateTime to hold the current GameState objects date
+                // Set the date to null
                 DateTime? date = null;
-                // TimeSpan to hold the current GameState objects time
+                // Set the time to null
                 TimeSpan? time = null;
                 // Iterate through the lines and parse the properties of each GameState object
                 foreach (string line in lines)
                 {
-                    // Check if the line is empty, if so create a GameState object in that position
+                    // Check if the line is empty or whitespace, which indicates the end of a GameState entry
                     if (string.IsNullOrWhiteSpace(line))
                     {
-                        // If all properties have been parsed, create a new GameState object and add it to the _playerScores list
+                        // If we have all the necessary properties, create a new GameState object and add it to the _playerScores list
                         if (id.HasValue && name != null && score.HasValue && date.HasValue)
                         {
-                            // Create a new GameState object with the results
+                            // Create a new GameState object using the parsed properties, using TimeSpan.Zero as a default value for time if it is null
                             var gameState = new GameState(id.Value, name, score.Value, time ?? TimeSpan.Zero);
-                            // Use reflection to set the Date property since it has a protected setter
+                            // Use reflection to set the Date property of the GameState object, since it is protected and cannot be set directly
                             typeof(GameState).GetProperty("Date").SetValue(gameState, date.Value);
                             // Add the GameState object to the _playerScores list
                             _playerScores.Add(gameState);
                         }
-                        // Reset the variables for the next GameState object
+                        // Reset the properties for the next GameState entry
                         id = null; name = null; score = null; date = null; time = null;
-                        // Continue to the next line
                         continue;
                     }
-                    // If the line starts with "Id:", parse the id
+                    // Check if the line starts with the Id
                     if (line.StartsWith("Id:"))
-                        // Set the id to the string after "Id:" and trim any whitespace, then parse it to an int
+                        // If so, parse the Id value from the line and assign it to the id variable
                         id = int.Parse(line.Substring(3).Trim());
-                    // If the line starts with "Name:", parse the name
+                    // Check if the line starts with the Name
                     else if (line.StartsWith("Name:"))
-                        // Set the name to the string after "Name:" and trim any whitespace
+                        // If so, parse the Name value from the line and assign it to the name variable
                         name = line.Substring(5).Trim();
-                    // If the line starts with "Score:", parse the score
+                    // Check if the line starts with the Score
                     else if (line.StartsWith("Score:"))
-                        // Set the score to the string after "Score:" and trim any whitespace, then parse it to an int
+                        // If so, parse the Score value from the line and assign it to the score variable
                         score = int.Parse(line.Substring(6).Trim());
-                    // If the line starts with "Date:", parse the date
+                    // Check if the line starts with the Date
                     else if (line.StartsWith("Date:"))
-                        // Set the date to the string after "Date:" and trim any whitespace, then parse it to a DateTime
+                        // If so, parse the Date value from the line and assign it to the date variable
                         date = DateTime.Parse(line.Substring(5).Trim());
-                    // If the line starts with "Time:", parse the time
+                    // Check if the line starts with the Time
                     else if (line.StartsWith("Time:"))
-                        // Set the time to the string after "Time:" and trim any whitespace, then parse it to a TimeSpan
+                        // If so, parse the Time value from the line and assign it to the time variable
                         time = TimeSpan.Parse(line.Substring(5).Trim());
                 }
-                // After the loop, check if there is a GameState object that has been parsed but not added to the list
+                // Check if we have all the necessary properties for the last GameState entry after the loop
                 if (id.HasValue && name != null && score.HasValue && date.HasValue)
                 {
-                    // If so, create a new GameState object and add it to the _playerScores list
+                    // Create a new GameState object using the parsed properties, using TimeSpan.Zero as a default value for time if it is null
                     var gameState = new GameState(id.Value, name, score.Value, time ?? TimeSpan.Zero);
-                    // Use reflection to set the Date property since it has a protected setter
+                    // Use reflection to set the Date property of the GameState object, since it is protected and cannot be set directly
                     typeof(GameState).GetProperty("Date").SetValue(gameState, date.Value);
-                    // Add the GameState object to the _playerScores list
+                    // Add the GameState object to the list
                     _playerScores.Add(gameState);
                 }
                 // If reading is successful, return true
@@ -322,92 +312,118 @@ namespace MinesweeperClassLibrary.Services.MinesweeperDAO
         }
 
         /// <summary>
-        /// Method to save the game state to a JSON file
+        /// Save the current game progress (BoardModel and GameState) to a JSON file.
         /// </summary>
-        /// <param name="gameSave"></param>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public bool SaveGame(GameSave gameSave, string filePath)
+        /// <param name="board">The board to save.</param>
+        /// <param name="gameState">The game state to save.</param>
+        /// <param name="filename">The filename for the save file (without path).</param>
+        /// <returns>True if save is successful, false otherwise.</returns>
+        public bool SaveGameProgress(BoardModel board, GameState gameState, int rewards, string filename)
         {
+            // Get the file path for the save file
+            string filePath = filename;
+            // If the filename is not an absolute path, combine it with the App_Data directory in the application's base directory
+            if (!Path.IsPathRooted(filename))
+            {
+                // Define the directory path for the App_Data folder
+                string dirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+                // Check if the directory exists, if not create it
+                if (!Directory.Exists(dirPath))
+                    Directory.CreateDirectory(dirPath);
+                // Combine the directory path with the filename to get the full file path for the save file
+                filePath = Path.Combine(dirPath, filename);
+            }
             // Enter a try-catch block to handle potential exceptions during file writing
             try
             {
-                // Check if the directory exists, if not create it
-                string directory = Path.GetDirectoryName(filePath);
-                // If the directory is not null or empty and does not exist, create it
-                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                {
-                    // Create the directory
-                    Directory.CreateDirectory(directory);
-                }
-
-                // Configure JSON serialization options
-                var options = new JsonSerializerOptions
-                {
-                    // Set WriteIndented to true for better readability of the JSON file
-                    WriteIndented = true,
-                    // IncludeFields is set to true to allow serialization of fields in the GameSave class
-                    IncludeFields = true,
-                    // Add the custom converter for CellModel[,] to handle serialization and deserialization of the 2D array
-                    Converters = { new CellModelArrayConverter() }
-                };
-
-                // Serialize the GameSave object to JSON
-                string jsonString = JsonSerializer.Serialize(gameSave, options);
-
-                // Write the JSON string to file
-                File.WriteAllText(filePath, jsonString);
-
+                // Create an object that contains the BoardModel, GameState, and Rewards to be saved, which will be serialized to JSON
+                var saveObj = new { Board = board, GameState = gameState, Rewards = rewards };
+                // Create JsonSerializerOptions and add the custom converters for CellModel polymorphism, CellModel[,] and TimeSpan
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                options.Converters.Add(new CellModelJsonConverter());
+                options.Converters.Add(new CellModel2DArrayConverter());
+                options.Converters.Add(new TimeSpanConverter());
+                // Serialize the save object to a JSON string using the specified options, which will include the custom converters for handling the complex types
+                string json = JsonSerializer.Serialize(saveObj, options);
+                // Write the JSON string to the specified file path, overwriting any existing content in the file
+                File.WriteAllText(filePath, json);
+                // If writing is successful, return true
                 return true;
             }
-            // If an exception occurs during file writing, log the error and throw to show the error message in the GUI
+            // If we get an exception, catch it and throw a new exception with a message
             catch (Exception ex)
             {
-                // Log the error to console
-                Console.WriteLine($"Error saving game: {ex.Message}");
-                throw;
+                // Thorw the exception message
+                throw new Exception($"Save failed: {ex.Message}", ex);
             }
         }
 
         /// <summary>
-        /// Method to load the game state from a JSON file and return a GameSave object
+        /// Load game progress from a JSON file.
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filename"></param>
+        /// <param name="board"></param>
+        /// <param name="gameState"></param>
+        /// <param name="rewards"></param>
         /// <returns></returns>
-        public GameSave LoadGame(string filePath)
+        public bool LoadGameProgress(string filename, out BoardModel board, out GameState gameState, out int rewards)
         {
+            // Set board to null
+            board = null;
+            // Set gameState to null
+            gameState = null;
+            // Set rewards to 0
+            rewards = 0;
+            // Get the file path for the save file
+            string filePath = filename;
+            // If the filename is not an absolute path, combine it with the App_Data directory in the application's base directory
+            if (!Path.IsPathRooted(filename))
+            {
+                // Define the directory path for the App_Data folder
+                string dirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+                // Combine the directory path with the filename to get the full file path for the save file
+                filePath = Path.Combine(dirPath, filename);
+            }
+            // Check if the file exists, if not return false
+            if (!File.Exists(filePath))
+                // If the file does not exist, return false to indicate that the load operation was unsuccessful
+                return false;
             // Enter a try-catch block to handle potential exceptions during file reading and deserialization
             try
             {
-                // Check if the file exists
-                if (!File.Exists(filePath))
+                // Read the entire content of the file into a string variable called json, which will contain the JSON representation of the saved game progress
+                string json = File.ReadAllText(filePath);
+                // Create JsonSerializerOptions and add the custom converters for CellModel polymorphism, CellModel[,] and TimeSpan
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                options.Converters.Add(new CellModelJsonConverter());
+                options.Converters.Add(new CellModel2DArrayConverter());
+                options.Converters.Add(new TimeSpanConverter());
+                // Parse the JSON string into a JsonDocument to access its properties and deserialize the BoardModel and GameState objects using the specified options with the custom converters
+                using (JsonDocument doc = JsonDocument.Parse(json))
                 {
-                    return null;
+                    // Get the root element of the JSON document, which contains the properties for Board, GameState, and Rewards
+                    var root = doc.RootElement;
+                    // Get the JSON elements for the Board and GameState properties from the root element
+                    var boardElem = root.GetProperty("Board").GetRawText();
+                    // Get the JSON element for the GameState property from the root element
+                    var gameStateElem = root.GetProperty("GameState").GetRawText();
+                    // Deserialize the BoardModel and GameState objects from their respective JSON elements using the specified options with the custom converters, and assign them to the out parameters
+                    board = JsonSerializer.Deserialize<BoardModel>(boardElem, options);
+                    // Deserialize the GameState object from its JSON element using the specified options with the custom converters, and assign it to the out parameter
+                    gameState = JsonSerializer.Deserialize<GameState>(gameStateElem, options);
+                    // Check if the Rewards property exists in the JSON, and if so, parse its value and assign it to the rewards out parameter
+                    if (root.TryGetProperty("Rewards", out var rewardsElem))
+                        // If the Rewards property exists, parse its value as an integer and assign it to the rewards out parameter
+                        rewards = rewardsElem.GetInt32();
                 }
-
-                // Read the JSON string from file
-                string jsonString = File.ReadAllText(filePath);
-
-                // Configure JSON deserialization options
-                var options = new JsonSerializerOptions
-                {
-                    // Set the IncludeFields to true to allow deserialization of fields in the GameSave class
-                    IncludeFields = true,
-                    // Add the custom converter for CellModel[,] to handle serialization and deserialization of the 2D array
-                    Converters = { new CellModelArrayConverter() }
-                };
-
-                // Deserialize the JSON string to GameSave object
-                GameSave gameSave = JsonSerializer.Deserialize<GameSave>(jsonString, options);
-
-                return gameSave;
+                // If reading and deserialization are successful, return true
+                return true;
             }
-            // If an exception occurs during file reading or deserialization, log the error and throw to show the error message in the GUI
+            // If we get an exception, catch it and throw a new exception with a message
             catch (Exception ex)
             {
-                // Log the error to console
-                Console.WriteLine($"Error loading game: {ex.Message}");
-                throw;
+                // Throw the exception message
+                throw new Exception($"Load failed: {ex.Message}", ex);
             }
         }
     }

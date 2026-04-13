@@ -124,6 +124,18 @@
   <data name="Gold" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\SpriteAssets\Gold.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MinesweeperBomb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SoundEffects\MinesweeperBomb.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="MinesweeperClick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SoundEffects\MinesweeperClick.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="MinesweeperPlaceFlag" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SoundEffects\MinesweeperPlaceFlag.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="MinesweeperReward" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SoundEffects\MinesweeperReward.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Number 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\SpriteAssets\Number 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

@@ -13,6 +13,47 @@ namespace MinesweeperClassLibrary.Tests
 {
     public class MinesweeperLogicTests
     {
+        // Test RewardsRemaining property get/set
+        [Fact]
+        public void RewardsRemaining_Property_ShouldGetAndSet()
+        {
+            var logic = new MinesweeperLogic();
+            logic.RewardsRemaining = 5;
+            Assert.Equal(5, logic.RewardsRemaining);
+            logic.RewardsRemaining = 2;
+            Assert.Equal(2, logic.RewardsRemaining);
+        }
+
+        // Test Cells property
+        [Fact]
+        public void Cells_Property_ShouldReturnCells()
+        {
+            var board = new BoardModel(1);
+            var logic = new MinesweeperLogic();
+            logic.GetBoard(board);
+            Assert.Equal(board.Cells, logic.Cells);
+        }
+
+        // Test DecrementRewards method
+        [Fact]
+        public void DecrementRewards_ShouldDecreaseRewardsRemaining()
+        {
+            var logic = new MinesweeperLogic();
+            logic.RewardsRemaining = 3;
+            logic.DecrementRewards();
+            Assert.Equal(2, logic.RewardsRemaining);
+        }
+
+        // Test ResetRewards method
+        [Fact]
+        public void ResetRewards_ShouldSetRewardsRemainingToZero()
+        {
+            var logic = new MinesweeperLogic();
+            logic.RewardsRemaining = 7;
+            logic.ResetRewards();
+            Assert.Equal(0, logic.RewardsRemaining);
+        }
+
         // Test the GetSize method to ensure it sets the size correctly
         [Fact]
         public void GetSize_ShouldReturnSize()
@@ -44,13 +85,10 @@ namespace MinesweeperClassLibrary.Tests
             // Iterate through the board cells to count bombs
             for (int i = 0; i < board.Size; i++)
             {
-                // Iterate through each cell in the row
                 for (int j = 0; j < board.Size; j++)
                 {
-                    // Check if the cell contains a bomb and increment the bomb count
-                    if (board.Cells[i, j].isBomb == true)
+                    if (board.Cells[i, j] is BombCellModel)
                     {
-                        // Increment the bomb count if a bomb is found
                         bombCount++;
                     }
                 }
@@ -80,29 +118,22 @@ namespace MinesweeperClassLibrary.Tests
                 for (int j = 0; j < board.Size; j++)
                 {
                     // If the cell does not contain a bomb, count the number of bombs around it and assert that it matches the expected count
-                    if (board.Cells[i, j].isBomb == false)
+                    if (!(board.Cells[i, j] is BombCellModel))
                     {
-                        // Initialize the expected bomb count to zero
                         int expectedCount = 0;
-                        // Iterate through the neighboring cells to count the number of bombs
                         for (int x = -1; x <= 1; x++)
                         {
-                            // Iterate through the neighboring cells in the y-direction
                             for (int y = -1; y <= 1; y++)
                             {
-                                // Check if the neighboring cell is within the bounds of the board
                                 if (i + x >= 0 && i + x < board.Size && j + y >= 0 && j + y < board.Size)
                                 {
-                                    // If the neighboring cell contains a bomb, increment the expected bomb count
-                                    if (board.Cells[i + x, j + y].isBomb == true)
+                                    if (board.Cells[i + x, j + y] is BombCellModel)
                                     {
-                                        // Increment the expected bomb count if a bomb is found in the neighboring cell
                                         expectedCount++;
                                     }
                                 }
                             }
                         }
-                        // Assert that the number of bombs around the cell matches the expected count
                         Assert.Equal(expectedCount, board.Cells[i, j].NumberOfBombNeighbors);
                     }
                 }
@@ -214,19 +245,15 @@ namespace MinesweeperClassLibrary.Tests
             // Iterate through the columns
             for (int i = 0; i < board.Size; i++)
             {
-                // Iterate through each cell in the row
                 for (int j = 0; j < board.Size; j++)
                 {
-                    // Check if the cell contains a bomb and store its coordinates
-                    if (board.Cells[i, j].isBomb)
+                    if (board.Cells[i, j] is BombCellModel)
                     {
-                        // Store the coordinates of the bomb cell
                         bombRow = i;
                         bombCol = j;
                         break;
                     }
                 }
-                // Break the outer loop if a bomb cell has been found
                 if (bombRow != -1) break;
             }
 
@@ -258,19 +285,15 @@ namespace MinesweeperClassLibrary.Tests
             // Iterate through the columns
             for (int i = 0; i < board.Size; i++)
             {
-                // Iterate through each cell in the row
                 for (int j = 0; j < board.Size; j++)
                 {
-                    // Check if the cell does not contain a bomb and store its coordinates
-                    if (!board.Cells[i, j].isBomb)
+                    if (!(board.Cells[i, j] is BombCellModel))
                     {
-                        // Store the coordinates of the non-bomb cell
                         nonBombRow = i;
                         nonBombCol = j;
                         break;
                     }
                 }
-                // Break the outer loop if a non bomb cell has been found
                 if (nonBombRow != -1) break;
             }
 
@@ -329,7 +352,7 @@ namespace MinesweeperClassLibrary.Tests
                 for (int j = 0; j < board.Size; j++)
                 {
                     // Check if the cell is empty
-                    if (!board.Cells[i, j].isBomb && board.Cells[i, j].NumberOfBombNeighbors == 0)
+                    if (!(board.Cells[i, j] is BombCellModel) && board.Cells[i, j].NumberOfBombNeighbors == 0)
                     {
                         // Store the coordinates of the empty cell
                         startRow = i;
@@ -400,7 +423,7 @@ namespace MinesweeperClassLibrary.Tests
                 for (int j = 0; j < board.Size; j++)
                 {
                     // Check if the cell is empty
-                    if (!board.Cells[i, j].isBomb && board.Cells[i, j].NumberOfBombNeighbors == 0)
+                    if (!(board.Cells[i, j] is BombCellModel) && board.Cells[i, j].NumberOfBombNeighbors == 0)
                     {
                         // Store the coordinates of the empty cell
                         startRow = i;
@@ -425,9 +448,8 @@ namespace MinesweeperClassLibrary.Tests
                 for (int j = 0; j < board.Size; j++)
                 {
                     // If the cell is a bomb, verify it was not visited
-                    if (board.Cells[i, j].isBomb)
+                    if (board.Cells[i, j] is BombCellModel)
                     {
-                        // Assert that the bomb cell was not revealed
                         Assert.False(board.Cells[i, j].isVisited);
                     }
                 }
@@ -461,7 +483,7 @@ namespace MinesweeperClassLibrary.Tests
                 for (int j = 0; j < board.Size; j++)
                 {
                     // Check if the cell is empty
-                    if (!board.Cells[i, j].isBomb && board.Cells[i, j].NumberOfBombNeighbors == 0)
+                    if (!(board.Cells[i, j] is BombCellModel) && board.Cells[i, j].NumberOfBombNeighbors == 0)
                     {
                         // Store the coordinates of the empty cell
                         startRow = i;
@@ -503,9 +525,8 @@ namespace MinesweeperClassLibrary.Tests
                                     // Get the neighboring cell
                                     CellModel neighbor = board.Cells[neighborRow, neighborCol];
                                     // If the neighbor is a numbered cell, it should be revealed
-                                    if (!neighbor.isBomb && neighbor.NumberOfBombNeighbors > 0 && !neighbor.HasSpecialReward)
+                                    if (!(neighbor is BombCellModel) && neighbor.NumberOfBombNeighbors > 0 && !(neighbor is RewardCellModel))
                                     {
-                                        // Assert that the numbered border cell was revealed
                                         Assert.True(neighbor.isVisited);
                                     }
                                 }

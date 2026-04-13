@@ -14,18 +14,20 @@ using System.Threading.Tasks;
 
 namespace MinesweeperClassLibrary.Models
 {
-    /// <summary>
-    /// A cell that contains a reward, inherits from CellModel
-    /// </summary>
     public class RewardCellModel : CellModel
     {
         /// <summary>
-        /// Constructor for the reward cell
+        /// Parameterless constructor for deserialization
+        /// </summary>
+        public RewardCellModel() : base(0, 0, " ", false, false, 0) { }
+
+        /// <summary>
+        /// Parameterized constructor for the reward cell
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
         public RewardCellModel(int row, int column)
-            : base(row, column, " ", false, false, false, 0, true)
+            : base(row, column, " ", false, false, 0)
         {
         }
 
