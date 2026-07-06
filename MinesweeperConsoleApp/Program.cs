@@ -23,7 +23,7 @@ namespace MinesweeperConsoleApp
             // Display the answer keys for the first board
             Console.WriteLine("Here is the answer key for the first board");
             // Create a new board with difficulty level 1
-            BoardModel board = new BoardModel(1);
+            BoardModel board = new BoardModel(0);
             // Create a new instance of the MinesweeperLogic class
             MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
             // Get the size of the board
@@ -38,7 +38,7 @@ namespace MinesweeperConsoleApp
             // Display the answer keys for the second board
             Console.WriteLine("Here is the answer key for the second board");
             // Create a new board with difficulty level 2
-            BoardModel board2 = new BoardModel(2);
+            BoardModel board2 = new BoardModel(0);
             // Create a new instance of the MinesweeperLogic class
             MinesweeperLogic minesweeperLogic2 = new MinesweeperLogic();
             // Get the size of the board

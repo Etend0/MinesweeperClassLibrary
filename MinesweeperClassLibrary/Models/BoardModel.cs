@@ -45,6 +45,10 @@ namespace MinesweeperClassLibrary.Models
             // Set the grid size based on the selected difficulty
             switch (DifficultyLevels)
             {
+                // Very Easy
+                case 0:
+                    Size = 4;
+                    break;
                 // Easy
                 case 1:
                     Size = 10;
