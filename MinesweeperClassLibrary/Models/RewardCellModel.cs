@@ -24,7 +24,7 @@ namespace MinesweeperClassLibrary.Models
             // Set the special reward property to true
             HasSpecialReward = true;
             // Set the type to "R "
-            Type = "R ";
+            Type = "r ";
         }
 
         /// <summary>
@@ -43,17 +43,26 @@ namespace MinesweeperClassLibrary.Models
             // Set the special reward property to true
             HasSpecialReward = true;
             // Set the type to "R "
-            Type = "R ";
+            Type = "r ";
         }
 
         /// <summary>
-        /// ToString method for the bomb cell model
+        /// ToString method for the reward cell model
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            // Return the string representation of the Reward cell
-            return Type;
+            // Check if the cell is flagged
+            if (!IsFlagged)
+            {
+                // Return the string representation of the empty cell
+                return Type;
+            }
+            else
+            {
+                // Return the string representation of the flagged cell
+                return "F ";
+            }
         }
     }
 }

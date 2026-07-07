@@ -83,5 +83,107 @@ namespace MinesweeperClassLibrary.Models
                 }
             }
         }
+
+        /// <summary>
+        /// Method to determine the current game state based on the board's cells
+        /// </summary>
+        public (bool IsGameOver, bool IsPlayerDead, bool FlaggedAllBombs) DetermineGameState()
+        {
+            // Set the current game state to InProgress
+            GameState currentState = GameState.InProgress;
+
+            // Keep track of the number of bombs on the board
+            int bombCount = 0;
+
+            // Keep track of the number of bombs that have been flagged
+            int bombsFlagged = 0;
+
+            // Keep track of the number of non-bomb cells that have been visited
+            int cellsVisited = 0;
+
+            // Get the board size
+            int boardSize = Size * Size;
+
+            // Count the number of bombs on the board
+            for (int i = 0; i < Size; i++)
+            {
+                // Go through each row
+                for (int j = 0; j < Size; j++)
+                {
+                    // Grab the current cell model
+                    CellModel cellModel = Cells[i, j];
+
+                    // Check if the cell is a bomb and has been flagged
+                    if (cellModel.IsBomb)
+                    {
+                        // Increment the number of bombs on the board
+                        bombCount++;
+                    }
+                }
+            }
+
+            // Check if the game is still in progress
+            if (currentState == GameState.InProgress)
+            {
+                // Check if all non-bomb cells have been visited
+                if (bombsFlagged < bombCount)
+                {
+                    // Go through each column
+                    for (int i = 0; i < Size; i++)
+                    {
+                        // Go through each row
+                        for (int j = 0; j < Size; j++)
+                        {
+                            // Grab the current cell model
+                            CellModel cellModel = Cells[i, j];
+
+                            // Check if the cell is a bomb and has been flagged
+                            if (cellModel.IsBomb)
+                            {
+                                // Check if the bomb has been visited
+                                if (cellModel.IsVisited)
+                                {
+                                    // If a bomb has been visited, the player has lost the game
+                                    currentState = GameState.Lost;
+                                    return (true, true, false);
+                                }
+
+                                // If not, check if it's been flagged
+                                if (cellModel.IsFlagged)
+                                {
+                                    // If it has, increment the number of bombs that have been flagged
+                                    bombsFlagged++;
+                                }
+                            }
+
+                            // Check if the cell is not a bomb and has been visited
+                            if (!cellModel.IsBomb && cellModel.IsVisited)
+                            {
+                                // Keep track of the number of non-bomb cells that have been visited
+                                cellsVisited++;
+                            }
+                        }
+                    }
+                }
+
+                if (bombsFlagged == bombCount)
+                {
+                    // If all bombs have been flagged, the player has won the game
+                    currentState = GameState.Won;
+                    return (true, false, true);
+                }
+
+                // If all non-bomb cells have been visited, the player has won the game
+                if (cellsVisited == (boardSize - bombCount))
+                {
+                    // Set the current game state to Won and return true for IsGameOver and false for IsPlayerDead
+                    currentState = GameState.Won;
+                    return (true, false, false);
+                }
+            }
+
+            // The game has not ended, return false for both IsGameOver and IsPlayerDead
+            return (false, false, false);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MinesweeperClassLibrary.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +19,6 @@ namespace MinesweeperClassLibrary.Services.DataAccessLayer
     internal class MinesweeperDAO
     {
         // Class properties
-        private int _rewardsRemaining;
-        private int _difficultyLevels;
         private int _size;
         private CellModel[,] _cells;
 
@@ -51,6 +50,62 @@ namespace MinesweeperClassLibrary.Services.DataAccessLayer
         {
             return _size;
         }
+
+        /// <summary>
+        /// Method to setup the rewards on the board
+        /// </summary>
+        /// <param name="Cells"></param>
+        /// <returns></returns>
+        public CellModel[,] SetupRewards(CellModel[,] Cells)
+        {
+            // Grab the current list of cells and set it to the class property
+            this._cells = Cells;
+
+            // Create a random number generator to randomize positions on the board
+            Random random = new Random();
+
+            // Calculate the total number of cells on the board
+            int GridSize = _size * _size;
+
+            // Calculate the number of rewards to place based on 7% of the total cells
+            double numberOfRewards = GridSize * 0.07;
+
+            // Randomly select a row position for the reward
+            int Row = random.Next(0, _size);
+
+            // Randomly select a column position for the reward
+            int Column = random.Next(0, _size);
+
+            // Convert the number of rewards to an integer
+            int FinalNumberRewards = Convert.ToInt32(numberOfRewards);
+
+            // Set the current number of placed rewards
+            int rewardsPlaced = 0;
+
+            // Loop until the max number of rewards have been placed
+            while (rewardsPlaced < FinalNumberRewards)
+            {
+                // Randomly select a row position for the reward
+                Row = random.Next(0, _size);
+
+                // Randomly select a column position for the reward
+                Column = random.Next(0, _size);
+
+                // Check if the chosen position does not have a bomb or reward, if it doesn't, place one there and increment the rewards placed counter
+                if (Cells[Row, Column].HasSpecialReward != true)
+                {
+                    // Create the reward
+                    Cells[Row, Column] = new RewardCellModel(Row, Column, " ", false, false, false, 0, true);
+
+                    // Increment the rewards placed counter
+                    rewardsPlaced++;
+                }
+            }
+
+            // Return the updated cells with rewards placed
+            return Cells;
+        }
+
 
         /// <summary>
         /// Method to setup the bombs on the board
@@ -93,7 +148,7 @@ namespace MinesweeperClassLibrary.Services.DataAccessLayer
                 Column = random.Next(0, _size);
 
                 // Check if the chosen position does not have a bomb, if it doesn't, place one there and increment the bombs placed counter
-                if (Cells[Row, Column].IsBomb != true)
+                if (Cells[Row, Column].IsBomb != true && Cells[Row, Column].HasSpecialReward != true)
                 {
                     // Create the bomb
                     Cells[Row, Column] = new BombCellModel(Row, Column, " ", false, true, false, 0, false);
@@ -222,6 +277,8 @@ namespace MinesweeperClassLibrary.Services.DataAccessLayer
 
                     // Get the current cell and its type and number of bomb neighbors
                     CellModel currentCell = _cells[y, x];
+                    // Get the bool reward value to determine if the cell is a reward or not
+                    bool reward = currentCell.HasSpecialReward;
                     // Get the bool bomb value to determine if the cell is a bomb or not
                     bool bomb = currentCell.IsBomb;
                     // Get the string representation of the cell to draw
@@ -250,6 +307,12 @@ namespace MinesweeperClassLibrary.Services.DataAccessLayer
                                 Console.ForegroundColor = ConsoleColor.Yellow;
                                 break;
                         }
+                    }
+
+                    // If the cell has a reward, set the color to blue
+                    if (reward)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                     }
 
                     // If the cell is a bomb, set the color to red

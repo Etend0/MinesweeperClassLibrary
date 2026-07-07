@@ -40,15 +40,24 @@ namespace MinesweeperClassLibrary.Models
         /// <returns></returns>
         public override string ToString()
         {
-            if (NumberOfBombNeighbors > 0)
+            // Check if the cell is flagged
+            if (!IsFlagged)
             {
-                // Return the string representation of the empty cell with the number of bomb neighbors
-                return NumberOfBombNeighbors + " ";
+                if (NumberOfBombNeighbors > 0)
+                {
+                    // Return the string representation of the empty cell with the number of bomb neighbors
+                    return NumberOfBombNeighbors + " ";
+                }
+                else
+                {
+                    // Return the string representation of this cell
+                    return Type;
+                }
             }
             else
             {
-                // Return the string representation of the empty cell
-                return Type;
+                // Return the string representation of the flagged cell
+                return "F ";
             }
         }
     }

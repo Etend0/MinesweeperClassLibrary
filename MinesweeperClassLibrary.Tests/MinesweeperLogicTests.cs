@@ -30,6 +30,35 @@ namespace MinesweeperClassLibrary.Tests
             Assert.Equal(10, size);
         }
 
+        // Test the SetupRewards method to ensure it places rewards correctly
+        [Fact]
+        public void SetupRewards_ShouldPlaceRewards()
+        {
+            // Create a BoardModel with a set difficulty
+            BoardModel board = new BoardModel(1);
+            // Create an instance of MinesweeperLogic
+            MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
+            // Set the size of the board
+            minesweeperLogic.GetSize(board.Size);
+            // Call the SetupRewards method to place rewards on the board
+            minesweeperLogic.SetupRewards(board.Cells);
+            // Count the number of rewards placed on the board
+            int rewardCount = 0;
+            // Iterate through the board cells to count rewards
+            for (int i = 0; i < board.Size; i++)
+            {
+                for (int j = 0; j < board.Size; j++)
+                {
+                    if (board.Cells[i, j].HasSpecialReward == true)
+                    {
+                        rewardCount++;
+                    }
+                }
+            }
+            // Assert that the number of rewards placed matches the expected count for the difficulty level
+            Assert.Equal(7, rewardCount);
+        }
+
         // Test the SetupBombs method to ensure it places bombs correctly
         [Fact]
         public void SetupBombs_ShouldPlaceBombs()

@@ -56,8 +56,17 @@ namespace MinesweeperClassLibrary.Models
         /// <returns></returns>
         public override string ToString()
         {
-            // Return the string representation of the bomb cell
-            return Type;
+            // Check if the cell is flagged
+            if (!IsFlagged)
+            {
+                // Return the string representation of this cell
+                return Type;
+            }
+            else
+            {
+                // Return the string representation of the flagged cell
+                return "F ";
+            }
         }
     }
 }

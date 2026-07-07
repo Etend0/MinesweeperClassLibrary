@@ -52,6 +52,17 @@ namespace MinesweeperClassLibrary.Services.BusinessLogicLayer
         }
 
         /// <summary>
+        /// Method to setup the rewards on the board
+        /// </summary>
+        /// <param name="Cells"></param>
+        /// <returns></returns>
+        public CellModel[,] SetupRewards(CellModel[,] Cells)
+        {
+            // Call the DAO method to setup the rewards on the board
+            return _minesweeperDAO.SetupRewards(Cells);
+        }
+
+        /// <summary>
         /// Method to setup the bombs on the board
         /// </summary>
         /// <param name="Cells"></param>
