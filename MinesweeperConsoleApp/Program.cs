@@ -32,7 +32,7 @@ namespace MinesweeperConsoleApp
             // Display the answer keys for the first board
             Console.WriteLine("Here is the answer key for the first board");
             // Create a new board with difficulty level 1
-            BoardModel board = new BoardModel(1);
+            BoardModel board = new BoardModel(0);
             // Create a new instance of the MinesweeperLogic class
             MinesweeperLogic minesweeperLogic = new MinesweeperLogic();
             // Get the size of the board
@@ -193,6 +193,12 @@ namespace MinesweeperConsoleApp
                             }
                             // If the user wants to check the cell, set IsVisited to true
                             currentCell.IsVisited = true;
+
+                            // If we for some reason click on a flagged cell, we want to unflag it
+                            if (currentCell.IsFlagged)
+                            {
+                                currentCell.IsFlagged = false;
+                            }    
                         }
                         else if (checkOrFlag == 2)
                         {
@@ -205,8 +211,10 @@ namespace MinesweeperConsoleApp
                 }
             }
 
+            // Print the final state of the board
             PrintBoard(board);
 
+            // Display the final game state to the user
             if (victory && !death)
             {
                 if (!flaggedAllBombs)

@@ -19,9 +19,9 @@ namespace MinesweeperClassLibrary.Models
         // Class level properties
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public int Size { get; set; }
-        public CellModel[,] Cells { get; set; }
-        public int DifficultyLevels { get; set; }
+        public int Size { get; private set; }
+        public CellModel[,] Cells { get; private set; }
+        public int DifficultyLevels { get; private set; }
         public int RewardsRemaining { get; set; }
 
         /// <summary>
