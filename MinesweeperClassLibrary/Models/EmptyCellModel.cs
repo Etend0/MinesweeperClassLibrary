@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MinesweeperClassLibrary.Models
 {
-    internal class EmptyCellModel : CellModel
+    public class EmptyCellModel : CellModel
     {
         /// <summary>
         /// Default constructor for the bomb cell model

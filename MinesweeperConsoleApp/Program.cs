@@ -1,5 +1,6 @@
 ﻿using MinesweeperClassLibrary.Models;
 using MinesweeperClassLibrary.Services.BusinessLogicLayer;
+using System.ComponentModel.DataAnnotations;
 
 /*
  * Elijah Hodge
@@ -191,14 +192,23 @@ namespace MinesweeperConsoleApp
 
                                 Console.WriteLine("You found a reward!");
                             }
-                            // If the user wants to check the cell, set IsVisited to true
-                            currentCell.IsVisited = true;
+
+                            if (currentCell.IsBomb == true || currentCell.HasSpecialReward == true || currentCell.NumberOfBombNeighbors > 0)
+                            {
+                                // If the user wants to check the cell, set IsVisited to true
+                                currentCell.IsVisited = true;
+                            }
+                            else
+                            {
+                                // Call the boards flood fill method to reveal cells that aren't bombs, rewards or already revealed
+                                board.FloodFill(board, currentCell.Row, currentCell.Column);
+                            }
 
                             // If we for some reason click on a flagged cell, we want to unflag it
                             if (currentCell.IsFlagged)
                             {
                                 currentCell.IsFlagged = false;
-                            }    
+                            }
                         }
                         else if (checkOrFlag == 2)
                         {

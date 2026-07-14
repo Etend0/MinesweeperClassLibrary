@@ -161,7 +161,9 @@ namespace MinesweeperClassLibrary.Services.DataAccessLayer
             return Cells;
         }
 
-        // Method to count the number of bombs surrounding each cell and update the NumberOfBombNeighbors property of each cell
+        /// <summary>
+        /// Method to count the number of bombs surrounding each cell and update the NumberOfBombNeighbors property of each cell
+        /// </summary>
         public void CountBombs()
         {
             // Loop through each cell in the grid
@@ -241,7 +243,9 @@ namespace MinesweeperClassLibrary.Services.DataAccessLayer
             }
         }
 
-        // Method to print the board to the console
+        /// <summary>
+        /// Method to print the board to the console
+        /// </summary>
         public void PrintAnswers()
         {
             // Column headers

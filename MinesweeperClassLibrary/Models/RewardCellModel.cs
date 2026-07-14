@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace MinesweeperClassLibrary.Models
 {
-    internal class RewardCellModel : CellModel
+    public class RewardCellModel : CellModel
     {
         /// <summary>
         /// Default constructor for the bomb cell model

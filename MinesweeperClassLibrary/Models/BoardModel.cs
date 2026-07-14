@@ -47,7 +47,7 @@ namespace MinesweeperClassLibrary.Models
             {
                 // Very Easy
                 case 0:
-                    Size = 4;
+                    Size = 6;
                     break;
                 // Easy
                 case 1:
@@ -184,6 +184,71 @@ namespace MinesweeperClassLibrary.Models
 
             // The game has not ended, return false for both IsGameOver and IsPlayerDead
             return (false, false, false);
+        }
+
+        /// <summary>
+        /// Fill the board with an algorithm on the given row and col
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        public BoardModel FloodFill(BoardModel board, int row, int col)
+        {
+            // Change the text color to white
+            Console.ForegroundColor = ConsoleColor.White;
+
+            // Check if the cell is on the board
+            if (row < 0 || row >= board.Size || col < 0 || col >= board.Size)
+            {
+                // If the cell is not on the board, end the method
+                return board;
+            }
+
+            // Get the current cell and its type and number of bomb neighbors
+            CellModel currentCell = board.Cells[row, col];
+
+            // If the cell is a bomb, already visited, or a reward, or already has bombs around it, end the method
+            if (currentCell.IsBomb || currentCell.IsVisited || currentCell.HasSpecialReward)
+            {
+                return board;
+            }
+
+            // Reveal the cell
+            currentCell.IsVisited = true;
+
+            // If the cell has bombs around it, don't go through it
+            if (currentCell.NumberOfBombNeighbors > 0)
+            {
+                return board;
+            }
+
+            // Call the FloodFill method to the east
+            board = FloodFill(board, row, col + 1);
+
+            // Call the FloodFill method to the north
+            board = FloodFill(board, row - 1, col);
+
+            // Call the FloodFill method to the south
+            board = FloodFill(board, row + 1, col);
+
+            // Call the FloodFill method to the west
+            board = FloodFill(board, row, col - 1);
+
+            // Call the FloodFill method to the north-east
+            board = FloodFill(board, row - 1, col + 1);
+
+            // Call the FloodFill method to the north-west
+            board = FloodFill(board, row - 1, col - 1);
+
+            // Call the FloodFill method to the south-east
+            board = FloodFill(board, row + 1, col + 1);
+
+            // Call the FloodFill method to the south-west
+            board = FloodFill(board, row + 1, col - 1);
+
+            // Return the board
+            return board;
         }
     }
 }
