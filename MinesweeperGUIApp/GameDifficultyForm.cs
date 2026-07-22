@@ -1,3 +1,11 @@
+/*
+ * Elijah Hodge
+ * CST - 250
+ * 07/21/2026
+ * Minesweeper Class Library
+ * Milestone 4
+ */
+
 namespace MinesweeperGUIApp
 {
     public partial class GameDifficultyForm : Form

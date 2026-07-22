@@ -12,6 +12,14 @@ using System.Windows.Forms;
 using static MinesweeperClassLibrary.Models.BoardModel;
 using static System.Formats.Asn1.AsnWriter;
 
+/*
+ * Elijah Hodge
+ * CST - 250
+ * 07/21/2026
+ * Minesweeper Class Library
+ * Milestone 4
+ */
+
 namespace MinesweeperGUIApp
 {
     public partial class GameForm : Form

@@ -4,6 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * Elijah Hodge
+ * CST - 250
+ * 07/21/2026
+ * Minesweeper Class Library
+ * Milestone 4
+ */
+
 namespace MinesweeperClassLibrary.Models
 {
     public class EmptyCellModel : CellModel
