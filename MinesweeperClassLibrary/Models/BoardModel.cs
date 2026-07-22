@@ -24,6 +24,9 @@ namespace MinesweeperClassLibrary.Models
         public int DifficultyLevels { get; private set; }
         public int RewardsRemaining { get; set; }
 
+        // Integer to keep track of the number of flags placed on the board
+        public int flagsPlaced;
+
         /// <summary>
         ///  Set the current game state
         /// </summary>
@@ -168,9 +171,13 @@ namespace MinesweeperClassLibrary.Models
 
                 if (bombsFlagged == bombCount)
                 {
-                    // If all bombs have been flagged, the player has won the game
-                    currentState = GameState.Won;
-                    return (true, false, true);
+                    // Check to see if the number of flags placed is equal to the number of flagged bombs on the board
+                    if (flagsPlaced == bombCount)
+                    {
+                        // If all bombs have been flagged, the player has won the game
+                        currentState = GameState.Won;
+                        return (true, false, true);
+                    }
                 }
 
                 // If all non-bomb cells have been visited, the player has won the game

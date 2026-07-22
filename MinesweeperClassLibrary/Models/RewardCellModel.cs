@@ -24,7 +24,7 @@ namespace MinesweeperClassLibrary.Models
             // Set the special reward property to true
             HasSpecialReward = true;
             // Set the type to "R "
-            Type = "r ";
+            Type = "R ";
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace MinesweeperClassLibrary.Models
             // Set the special reward property to true
             HasSpecialReward = true;
             // Set the type to "R "
-            Type = "r ";
+            Type = "R ";
         }
 
         /// <summary>
